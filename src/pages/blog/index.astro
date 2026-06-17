@@ -1,52 +1,135 @@
 ---
-import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { blogPageContent } from "../../config";
-import { render } from "astro:content";
 
 const posts = await getCollection("posts");
-posts.sort((a, b) => {
-  const dateA = new Date(a.data.pubDate).getTime();
-  const dateB = new Date(b.data.pubDate).getTime();
-  return dateB - dateA;
-});
+posts.sort(
+  (a, b) =>
+    new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+);
 for (const post of posts) {
   const { remarkPluginFrontmatter } = await render(post);
   post.data.readingTime = remarkPluginFrontmatter.minutesRead;
 }
+
+const dot = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
 ---
 
-<Layout seo={blogPageContent.seo}>
-  <section class="mt-10 max-w-2xl mx-auto px-6">
-    <h1 class="font-bold text-3xl mb-1">Blog</h1>
-    <p class="opacity-60 mb-14">{blogPageContent.subtitle}</p>
-
-    <div class="grid grid-cols-1 gap-10 sm:gap-6 mb-10">
-      {
-        posts.map((post) => (
-          <a
-            href={`/blog/${post.id}`}
-            class=" sm:flex sm:flex-row-reverse sm:justify-between sm:gap-6 post"
-          >
-            <Image
-              src={post.data.image.url}
-              alt={post.data.image.url}
-              width={100}
-              height={100}
-              class={"rounded-lg w-[100px] h-[100px] object-cover"}
-            />
-            <div class="mt-4 sm:my-auto">
-              <p class="opacity-60 mb-2">
-                {post.data.pubDate.toLocaleDateString()} ·{" "}
-                {post.data.readingTime}
-              </p>
-              <h3 class="font-medium hover-underline">{post.data.title}</h3>
-              <p class="text-sm opacity-60 mt-2 mb-3">{post.data.description}</p>
-            </div>
-          </a>
-        ))
-      }
+<Layout navVariant="post" seo={blogPageContent.seo}>
+  <section class="writing">
+    <div class="writing-head">
+      <div>
+        <div class="section-label" style="margin-bottom:10px;">Writing</div>
+        <div class="writing-title">{blogPageContent.heading}</div>
+      </div>
+      <div class="writing-count mono">{posts.length} posts</div>
     </div>
+
+    {
+      posts.map((post) => (
+        <a class="post-row" href={`/blog/${post.id}`}>
+          <div class="post-meta mono">
+            <div>{dot(new Date(post.data.pubDate))}</div>
+            <div class="post-read">{post.data.readingTime}</div>
+          </div>
+          <div class="post-main">
+            <div class="post-title">{post.data.title}</div>
+            <p class="post-desc">{post.data.description}</p>
+          </div>
+        </a>
+      ))
+    }
   </section>
 </Layout>
+
+<style>
+  .writing-head {
+    padding: 50px 44px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .writing-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    max-width: 420px;
+    line-height: 1.15;
+  }
+  .writing-count {
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .post-row {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    grid-template-columns: 0.22fr 0.78fr;
+    border-top: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+  .post-row:last-of-type {
+    border-bottom: 1px solid var(--line);
+  }
+  .post-row:hover {
+    background: var(--hover);
+  }
+  .post-meta {
+    padding: 30px 28px 30px 44px;
+    border-right: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .post-read {
+    margin-top: 6px;
+    opacity: 0.7;
+  }
+  .post-main {
+    padding: 30px 44px;
+  }
+  .post-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  .post-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+    max-width: 600px;
+  }
+
+  @media (max-width: 720px) {
+    .writing-head {
+      padding: 36px 18px 24px;
+    }
+    .writing-title {
+      font-size: 20px;
+      max-width: 240px;
+    }
+    .post-row {
+      grid-template-columns: 1fr;
+    }
+    .post-meta {
+      padding: 22px 18px 0;
+      border-right: none;
+      display: flex;
+      gap: 10px;
+    }
+    .post-read {
+      margin-top: 0;
+    }
+    .post-main {
+      padding: 8px 18px 22px;
+    }
+    .post-title {
+      font-size: 17px;
+    }
+  }
+</style>

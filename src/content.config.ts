@@ -9,11 +9,9 @@ const postsCollection = defineCollection({
     title: z.string(),
     pubDate: z.date(),
     description: z.string(),
-    author: z.string(),
-    image: z.object({
-      url: z.string(),
-      alt: z.string(),
-    }),
+    author: z.string().default("Haris Samingan"),
+    eyebrow: z.string().optional(),
+    contents: z.array(z.string()).optional(),
     readingTime: z.number().optional(),
   }),
 });

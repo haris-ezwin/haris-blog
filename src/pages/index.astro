@@ -1,89 +1,505 @@
 ---
 import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
-import { homePageContent, identity } from "../config";
-import SocialLink from "../components/SocialLink.astro";
-import Link from "../components/Link.astro";
-import { getCollection } from "astro:content";
+import { siteContent, identity } from "../config";
+import { getCollection, render } from "astro:content";
 
 const posts = await getCollection("posts");
-posts.sort((a, b) => {
-  const dateA = new Date(a.data.pubDate).getTime();
-  const dateB = new Date(b.data.pubDate).getTime();
-  return dateB - dateA;
-});
-posts.splice(2)
+posts.sort(
+  (a, b) =>
+    new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+);
+for (const post of posts) {
+  const { remarkPluginFrontmatter } = await render(post);
+  post.data.readingTime = remarkPluginFrontmatter.minutesRead;
+}
+
+const dot = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
 ---
 
-<Layout seo={homePageContent.seo}>
-  <section class="mt-10 max-w-2xl mx-auto px-6">
-    <h1 class="font-bold text-3xl mb-1">{identity.name}</h1>
-    <p class="opacity-60 mb-10">{homePageContent.role}</p>
-    <div class="flex flex-col min-[520px]:flex-row gap-6 mb-8">
-      <Image
-        src={identity.logo}
-        alt={identity.name}
-        width={100}
-        height={100}
-        class="rounded-full"
-      />
-      <div class="group flex flex-col justify-center gap-2 w-fit">
-        {
-          homePageContent.socialLinks.map((link) => (
-            <SocialLink
-              title={link.title}
-              url={link.url}
-              icon={link.icon}
-              external={link.external}
-            />
-          ))
-        }
+<Layout seo={siteContent.seo}>
+  {/* ===== HERO ===== */}
+  <section id="top" class="hero">
+    <div class="hero-main">
+      <div class="hero-eyebrow mono">// {siteContent.hero.eyebrow}</div>
+      <h1 class="hero-title">{identity.name.split(" ")[0]}<br />{
+          identity.name.split(" ").slice(1).join(" ")
+        }</h1>
+      <div class="hero-intro">
+        <Image
+          src={identity.photo}
+          alt={identity.name}
+          width={84}
+          height={84}
+          class="avatar avatar-mobile"
+        />
+        <p class="hero-desc">{siteContent.hero.description}</p>
+      </div>
+      <div class="hero-actions">
+        <a
+          class="btn btn-solid"
+          href={identity.linkedin}
+          target="_blank"
+          rel="noopener">LINKEDIN <span>↗</span></a
+        >
+        <a class="btn btn-outline" href="#writing">READ MY WRITING</a>
       </div>
     </div>
-    <p class="max-w-md mb-8">
-      {homePageContent.description}
-    </p>
-    <div class="flex items-center gap-4 group w-fit">
+    <aside class="hero-side">
+      <div class="hero-photo">
+        <Image
+          src={identity.photo}
+          alt={identity.name}
+          width={140}
+          height={140}
+          class="avatar"
+        />
+      </div>
       {
-        homePageContent.links.map((link) => (
-          <Link text={link.title} href={link.url} external={link.external} />
+        siteContent.hero.meta.map((m) => (
+          <div class="hero-meta">
+            <div class="meta-label mono">{m.label}</div>
+            <div class="meta-value">{m.value}</div>
+          </div>
+        ))
+      }
+    </aside>
+  </section>
+
+  {/* ===== ABOUT ===== */}
+  <section id="about" class="about split">
+    <div class="split-rail">
+      <div class="section-label">01 — About</div>
+    </div>
+    <div class="split-body">
+      <p class="about-lead">{siteContent.about.lead}</p>
+      <p class="about-body">{siteContent.about.body}</p>
+    </div>
+  </section>
+
+  {/* ===== FOCUS ===== */}
+  <section id="focus" class="focus">
+    <div class="focus-head">
+      <div class="section-label">02 — What I'm building</div>
+    </div>
+    <div class="focus-grid">
+      {
+        siteContent.focus.map((f, i) => (
+          <div class="focus-card">
+            <div class="focus-num mono">{String(i + 1).padStart(2, "0")}</div>
+            <div class="focus-title">{f.title}</div>
+            <p class="focus-body">{f.body}</p>
+          </div>
         ))
       }
     </div>
   </section>
-  <section class="mt-20 max-w-2xl mx-auto px-6">
-    <h2 class="mb-8">Latest Posts</h2>
-    <div class="grid grid-cols-1 gap-10 sm:gap-6 mb-10">
-      {
-        posts.map((post) => (
-          <a
-            href={`/blog/${post.id}`}
-            class=" sm:flex sm:flex-row-reverse sm:justify-between sm:gap-6 post"
-          >
-            <Image
-              src={post.data.image.url}
-              alt={post.data.image.url}
-              width={100}
-              height={100}
-              class={"rounded-lg w-[100px] h-[100px] object-cover"}
-            />
-            <div class="mt-4 sm:my-auto">
-              <p class="opacity-60 mb-2">
-                {post.data.pubDate.toLocaleDateString()}
-              </p>
-              <h3 class="font-medium hover-underline">{post.data.title}</h3>
-              <p class="text-sm opacity-60 mt-2 mb-3">{post.data.description}</p>
-            </div>
-          </a>
-        ))
-      }
+
+  {/* ===== WRITING ===== */}
+  <section id="writing" class="writing">
+    <div class="writing-head">
+      <div>
+        <div class="section-label" style="margin-bottom:10px;">03 — Writing</div>
+        <div class="writing-title">{siteContent.writing.heading}</div>
+      </div>
+      <div class="writing-count mono">{posts.length} posts</div>
     </div>
-    <div class="text-center">
+
+    {
+      posts.map((post) => (
+        <a class="post-row" href={`/blog/${post.id}`}>
+          <div class="post-meta mono">
+            <div>{dot(new Date(post.data.pubDate))}</div>
+            <div class="post-read">{post.data.readingTime}</div>
+          </div>
+          <div class="post-main">
+            <div class="post-title">{post.data.title}</div>
+            <p class="post-desc">{post.data.description}</p>
+          </div>
+        </a>
+      ))
+    }
+  </section>
+
+  {/* ===== CONTACT ===== */}
+  <section id="contact" class="contact split">
+    <div class="split-rail">
+      <div class="section-label">04 — Contact</div>
+    </div>
+    <div class="split-body">
+      <div class="contact-heading">{siteContent.contact.heading}</div>
       <a
-        href="/blog"
-        class="underline underline-offset-4 opacity-60 hover:opacity-100 transition-opacity"
-        >View all</a
+        class="btn btn-accent"
+        href={identity.linkedin}
+        target="_blank"
+        rel="noopener">{siteContent.contact.cta.toUpperCase()} <span>↗</span></a
       >
     </div>
   </section>
 </Layout>
+
+<style>
+  /* ===== Hero ===== */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.35fr 0.65fr;
+  }
+  .hero-main {
+    padding: 76px 44px 64px;
+    border-right: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+  .hero-title {
+    font-weight: 700;
+    font-size: 62px;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 0 0 30px;
+  }
+  .hero-desc {
+    font-size: 17px;
+    line-height: 1.62;
+    color: var(--muted);
+    max-width: 430px;
+    margin: 0 0 38px;
+  }
+  /* Avatar shown inside hero-main only on mobile */
+  .avatar-mobile {
+    display: none;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .hero-side {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-photo {
+    padding: 32px 32px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    border: 1px solid var(--line);
+    background: #f4f4f4;
+  }
+  .hero-meta {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-meta:last-child {
+    border-bottom: none;
+    flex: 1;
+  }
+  .meta-label {
+    font-size: 10.5px;
+    color: var(--faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .meta-value {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* ===== Buttons ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Space Mono", monospace;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 2px;
+  }
+  .btn-solid {
+    color: var(--btn-fg);
+    background: var(--btn-bg);
+    padding: 13px 22px;
+  }
+  .btn-outline {
+    color: var(--fg);
+    border: 1.5px solid var(--fg);
+    padding: 11.5px 22px;
+  }
+  .btn-accent {
+    color: #fff;
+    background: var(--accent);
+    padding: 14px 24px;
+  }
+
+  /* ===== Split sections (about / contact) ===== */
+  .split {
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 0.32fr 0.68fr;
+  }
+  .split-rail {
+    padding: 60px 28px 60px 44px;
+    border-right: 1px solid var(--line);
+  }
+  .split-body {
+    padding: 60px 44px;
+  }
+  .about-lead {
+    font-size: 24px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+    margin: 0 0 26px;
+    max-width: 620px;
+    text-wrap: pretty;
+  }
+  .about-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0;
+    max-width: 560px;
+  }
+
+  /* ===== Focus ===== */
+  .focus {
+    border-top: 1px solid var(--line);
+  }
+  .focus-head {
+    padding: 50px 44px 0;
+  }
+  .focus-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .focus-card {
+    padding: 38px 30px 44px 44px;
+    border-right: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+  }
+  .focus-card:last-child {
+    border-right: none;
+    padding: 38px 44px 44px 30px;
+  }
+  .focus-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .focus-title {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .focus-body {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ===== Writing ===== */
+  .writing {
+    border-top: 1px solid var(--line);
+  }
+  .writing-head {
+    padding: 50px 44px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .writing-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .writing-count {
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .post-row {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    grid-template-columns: 0.22fr 0.78fr;
+    border-top: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+  .post-row:last-of-type {
+    border-bottom: 1px solid var(--line);
+  }
+  .post-row:hover {
+    background: var(--hover);
+  }
+  .post-meta {
+    padding: 30px 28px 30px 44px;
+    border-right: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .post-read {
+    margin-top: 6px;
+    opacity: 0.7;
+  }
+  .post-main {
+    padding: 30px 44px;
+  }
+  .post-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  .post-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+    max-width: 600px;
+  }
+
+  /* ===== Contact ===== */
+  .contact-heading {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+    max-width: 520px;
+    line-height: 1.1;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 860px) {
+    .hero-title {
+      font-size: 52px;
+    }
+    .focus-grid {
+      grid-template-columns: 1fr;
+    }
+    .focus-card,
+    .focus-card:last-child {
+      border-right: none;
+      padding: 32px 18px 36px;
+      margin-top: 0;
+    }
+    .focus-card {
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+    .hero-main {
+      padding: 42px 18px 34px;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-title {
+      font-size: 46px;
+    }
+    /* Move the avatar into the hero intro, beside the description */
+    .hero-intro {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .hero-desc {
+      margin: 0;
+      font-size: 15.5px;
+    }
+    .avatar-mobile {
+      display: block;
+      width: 84px;
+      height: 84px;
+      flex-shrink: 0;
+    }
+    .hero-side {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .hero-photo {
+      display: none;
+    }
+    .hero-meta {
+      border-right: 1px solid var(--line);
+    }
+    .hero-meta:nth-child(odd) {
+      border-right: none;
+    }
+    .hero-meta:last-child {
+      flex: none;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .split {
+      grid-template-columns: 1fr;
+    }
+    .split-rail {
+      padding: 32px 18px 0;
+      border-right: none;
+    }
+    .split-body {
+      padding: 24px 18px 40px;
+    }
+    .about-lead {
+      font-size: 21px;
+    }
+
+    .focus-head {
+      padding: 40px 18px 0;
+    }
+    .writing-head {
+      padding: 36px 18px 24px;
+    }
+    .writing-title {
+      font-size: 20px;
+      max-width: 240px;
+      line-height: 1.15;
+    }
+
+    .post-row {
+      grid-template-columns: 1fr;
+    }
+    .post-meta {
+      padding: 22px 18px 0;
+      border-right: none;
+      display: flex;
+      gap: 10px;
+    }
+    .post-read {
+      margin-top: 0;
+    }
+    .post-main {
+      padding: 8px 18px 22px;
+    }
+    .post-title {
+      font-size: 17px;
+    }
+    .contact-heading {
+      font-size: 28px;
+    }
+  }
+</style>

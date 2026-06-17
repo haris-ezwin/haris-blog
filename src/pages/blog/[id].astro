@@ -1,7 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getEntry, render } from "astro:content";
 import { Image } from "astro:assets";
+import { getCollection, getEntry, render } from "astro:content";
 import { identity } from "../../config";
 
 const { id } = Astro.params;
@@ -11,49 +11,346 @@ if (!entry) {
   return Astro.redirect("/blog");
 }
 
-const { Content,  remarkPluginFrontmatter} = await render(entry);
+const { Content, remarkPluginFrontmatter } = await render(entry);
+
+// Find the next (older) post for the "next" link.
+const all = await getCollection("posts");
+all.sort(
+  (a, b) =>
+    new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+);
+const idx = all.findIndex((p) => p.id === entry.id);
+const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
+
+const dot = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
+
+const pub = new Date(entry.data.pubDate);
+const readingTime = remarkPluginFrontmatter.minutesRead as string;
 ---
 
 <Layout
+  navVariant="post"
   seo={{
-    title: entry.data.title,
+    title: `${entry.data.title} — ${identity.name}`,
     description: entry.data.description,
-    image: entry.data.image.url,
+    image: identity.photo,
   }}
 >
-  <section class="mt-10 max-w-2xl mx-auto px-6">
-    <h1 class="font-bold text-3xl mb-4">{entry.data.title}</h1>
-    <p class="opacity-60 mb-6">
-      {entry.data.description}
-    </p>
-    <div class="flex gap-4 mb-6">
-      <Image
-        src={identity.logo}
-        alt={identity.name}
-        width={40}
-        height={40}
-        class="w-[40px] aspect-square object-cover rounded-full"
-      />
-      <div>
-        <p class="font-medium">{identity.name}</p>
-        <p class="opacity-60">
-          {entry.data.pubDate.toLocaleDateString()} · {
-            remarkPluginFrontmatter.minutesRead
-          }
-        </p>
+  {/* ===== ARTICLE HEADER ===== */}
+  <header class="article-head">
+    <div class="rail-spacer"></div>
+    <div class="head-body">
+      {
+        entry.data.eyebrow && (
+          <div class="art-eyebrow mono">// {entry.data.eyebrow}</div>
+        )
+      }
+      <h1 class="art-title">{entry.data.title}</h1>
+      <div class="art-byline mono">
+        <Image
+          src={identity.photo}
+          alt={identity.name}
+          width={34}
+          height={34}
+          class="byline-avatar"
+        />
+        <span class="byline-name">{entry.data.author}</span>
+        <span>·</span><span>{dot(pub)}</span>
+        <span>·</span><span>{readingTime}</span>
       </div>
     </div>
-    <Image
-      src={entry.data.image.url}
-      alt={entry.data.image.alt}
-      width={800}
-      height={300}
-      class="apsect-video w-full rounded-xl mb-10"
-    />
-    <article
-      class="prose prose-invert prose-a:text-blue-300 prose-a:underline-offset-4 prose-headings:mb-2 prose-p:text-[#b3b3b3]"
-    >
+  </header>
+
+  {/* ===== ARTICLE BODY ===== */}
+  <div class="article-grid">
+    <aside class="art-rail">
+      <div class="rail-sticky mono">
+        <div class="rail-title">Contents</div>
+        {
+          (entry.data.contents ?? []).map((c, i) => (
+            <div>{String(i + 1).padStart(2, "0")} — {c}</div>
+          ))
+        }
+      </div>
+    </aside>
+
+    <article class="prose">
       <Content />
+
+      {/* author footer */}
+      <div class="author-footer">
+        <Image
+          src={identity.photo}
+          alt={identity.name}
+          width={52}
+          height={52}
+          class="author-avatar"
+        />
+        <div>
+          <div class="author-name">{identity.name}</div>
+          <div class="author-role">Founder, EzWin Academy · Singapore</div>
+        </div>
+        <a
+          class="author-link mono"
+          href={identity.linkedin}
+          target="_blank"
+          rel="noopener">LINKEDIN ↗</a
+        >
+      </div>
     </article>
-  </section>
+  </div>
+
+  {/* ===== NEXT POST ===== */}
+  {
+    next && (
+      <a class="next-post" href={`/blog/${next.id}`}>
+        <div class="next-label mono">Next →</div>
+        <div class="next-body">
+          <div class="next-meta mono">
+            {dot(new Date(next.data.pubDate))} · {next.data.readingTime ?? ""}
+          </div>
+          <div class="next-title">{next.data.title}</div>
+        </div>
+      </a>
+    )
+  }
 </Layout>
+
+<style>
+  .article-head {
+    display: grid;
+    grid-template-columns: 0.22fr 0.78fr;
+  }
+  .rail-spacer {
+    border-right: 1px solid var(--line);
+  }
+  .head-body {
+    padding: 72px 44px 44px;
+    border-bottom: 1px solid var(--line);
+  }
+  .art-eyebrow {
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 26px;
+  }
+  .art-title {
+    font-weight: 700;
+    font-size: 46px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0 0 28px;
+    max-width: 760px;
+    text-wrap: balance;
+  }
+  .art-byline {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .byline-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    background: #f4f4f4;
+    border: 1px solid var(--line);
+  }
+  .byline-name {
+    color: var(--fg);
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: 0.22fr 0.78fr;
+  }
+  .art-rail {
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .rail-sticky {
+    position: sticky;
+    top: 120px;
+    padding: 44px 28px;
+    font-size: 11px;
+    color: var(--faint);
+    letter-spacing: 0.08em;
+    line-height: 2;
+  }
+  .rail-title {
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .prose {
+    padding: 48px 44px 72px;
+    max-width: 720px;
+  }
+
+  /* Markdown styling to match the design */
+  .prose :global(p) {
+    font-size: 16.5px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin: 0 0 22px;
+  }
+  .prose :global(p:first-child) {
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--fg);
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+  .prose :global(h2) {
+    font-family: "Space Mono", monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: 44px 0 18px;
+  }
+  .prose :global(em) {
+    font-style: italic;
+  }
+  .prose :global(a) {
+    color: var(--accent);
+    text-underline-offset: 4px;
+  }
+  .prose :global(blockquote) {
+    margin: 0 0 22px;
+    padding: 18px 24px;
+    border-left: 2px solid var(--accent);
+    background: var(--card);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--fg);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+  }
+  .prose :global(blockquote p) {
+    font-size: inherit;
+    color: inherit;
+    margin: 0;
+  }
+
+  .author-footer {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .author-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    background: #f4f4f4;
+    border: 1px solid var(--line);
+  }
+  .author-name {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .author-role {
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .author-link {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--btn-fg);
+    background: var(--btn-bg);
+    text-decoration: none;
+    padding: 11px 18px;
+    border-radius: 2px;
+  }
+
+  .next-post {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    grid-template-columns: 0.22fr 0.78fr;
+    border-top: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+  .next-post:hover {
+    background: var(--hover);
+  }
+  .next-label {
+    padding: 34px 28px 34px 44px;
+    border-right: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .next-body {
+    padding: 34px 44px;
+  }
+  .next-meta {
+    font-size: 12px;
+    color: var(--faint);
+    margin-bottom: 8px;
+  }
+  .next-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  @media (max-width: 720px) {
+    .article-head,
+    .article-grid {
+      grid-template-columns: 1fr;
+    }
+    .rail-spacer {
+      display: none;
+    }
+    .head-body {
+      padding: 48px 18px 32px;
+    }
+    .art-title {
+      font-size: 34px;
+    }
+    .art-rail {
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+    }
+    .rail-sticky {
+      position: static;
+      padding: 28px 18px;
+    }
+    .prose {
+      padding: 32px 18px 56px;
+    }
+    .author-footer {
+      flex-wrap: wrap;
+    }
+    .author-link {
+      margin-left: 0;
+    }
+    .next-post {
+      grid-template-columns: 1fr;
+    }
+    .next-label {
+      padding: 24px 18px 0;
+      border-right: none;
+    }
+    .next-body {
+      padding: 8px 18px 24px;
+    }
+  }
+</style>
