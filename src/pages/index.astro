@@ -2,6 +2,16 @@
 import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import { siteContent, identity } from "../config";
+
+const experience = [
+  { company: "EzWin Academy", role: "Founder", period: "2024 — Now" },
+  { company: "EduGrow", role: "Founder", period: "2024" },
+  { company: "Sigma School", role: "Head of Operations", period: "2023 — 2024" },
+  { company: "Next Level Academy", role: "Founder", period: "2022 — 2023" },
+  { company: "Zenith Coding Academy", role: "Co-founder", period: "2021 — 2022" },
+  { company: "Learn App Code", role: "Founder", period: "2019 — 2021" },
+  { company: "Blood", role: "Software Developer", period: "2018 — 2019" },
+];
 ---
 
 <Layout seo={siteContent.seo}>
@@ -16,87 +26,146 @@ import { siteContent, identity } from "../config";
       />
 
       <p class="kicker">{identity.name} · {identity.location}</p>
-      <h1>
-        <em>Pragmatic educator,</em><br />
-        founder &amp; <em>occasional maker.</em>
-      </h1>
-      <p class="intro-copy">{siteContent.hero.description}</p>
+      <h1>Building a math tuition business in Singapore</h1>
+      <p class="intro-copy">
+        I’m an educator, entrepreneur, and former software developer. After years
+        of building coding schools and education businesses, I now run EzWin
+        Academy—combining strong math teaching with the tools and systems I wish
+        every student had.
+      </p>
     </header>
 
-    <section class="project" aria-labelledby="project-title">
-      <h2 id="project-title" class="brand-line">
-        <span aria-hidden="true">✦</span> Building education differently
-      </h2>
-      <img
-        class="project-strip"
-        src="/images/education-product-triptych.webp"
-        alt="Placeholder education product interfaces displayed on three phones"
-      />
-      <p>
-        I’m building a modern tuition business where strong teaching meets
-        thoughtful technology. The goal is simple: make excellent learning more
-        personal, measurable, and accessible.
-      </p>
-    </section>
-
-    <section aria-labelledby="now-title">
-      <h2 id="now-title" class="section-title">Now</h2>
-      <div class="rows">
+    <section aria-labelledby="experience-title">
+      <h2 id="experience-title" class="section-title">Companies I’ve worked at or founded</h2>
+      <div class="experience-list">
         {
-          siteContent.hero.meta.map((item) => (
-            <div class="row">
-              <span>{item.label}</span>
-              <span>{item.value}</span>
+          experience.map((item) => (
+            <div class="experience-row">
+              <div>
+                <strong>{item.company}</strong>
+                <span>{item.role}</span>
+              </div>
+              <span>{item.period}</span>
             </div>
           ))
         }
       </div>
     </section>
 
-    <section aria-labelledby="focus-title">
-      <h2 id="focus-title" class="section-title">What I’m building</h2>
-      <p class="section-intro">
-        Three ideas guide the work. They keep the business useful, human, and
-        focused on outcomes that matter.
-      </p>
-      <div class="rows focus-rows">
-        {
-          siteContent.focus.map((item, index) => (
-            <article class="focus-row">
-              <div class="row-heading">
-                <span>{item.title}</span>
-                <span class="row-index">0{index + 1}</span>
-              </div>
-              <p>{item.body}</p>
-            </article>
-          ))
-        }
+    <section aria-labelledby="difference-title">
+      <h2 id="difference-title" class="section-title">How is my math tuition different?</h2>
+      <div class="difference-list">
+        <article>
+          <span class="number">01</span>
+          <div>
+            <h3>Over, over, over deliver.</h3>
+            <p>
+              Create far more useful content than expected—from carefully made
+              resources to clear math explanation videos that make difficult
+              questions finally click.
+            </p>
+          </div>
+        </article>
+        <article>
+          <span class="number">02</span>
+          <div>
+            <h3>Use technology and AI.</h3>
+            <p>
+              The long-term goal is a physical tuition centre built around
+              laptops instead of paper: targeted practice, immediate feedback,
+              and a learning system that adapts to each student.
+            </p>
+          </div>
+        </article>
       </div>
     </section>
 
-    <section aria-labelledby="about-title">
-      <h2 id="about-title" class="section-title">Scenes from the work</h2>
-      <p class="section-intro">{siteContent.about.lead}</p>
-      <img
-        class="work-collage"
-        src="/images/education-work-collage.webp"
-        alt="Placeholder collage of teaching, planning, and collaborative workshop scenes"
-      />
-      <p class="caption">Placeholder imagery for workshops, teaching, and building.</p>
-      <p class="about-copy">{siteContent.about.body}</p>
-    </section>
+    <button
+      class="longer-version"
+      type="button"
+      aria-expanded="false"
+      aria-controls="longer-version-gate"
+    >
+      <span>The longer version of me</span>
+      <span class="gate-icon" aria-hidden="true">＋</span>
+    </button>
+
+    <div
+      class="longer-version-gate"
+      id="longer-version-gate"
+      aria-hidden="true"
+    >
+      <p>
+        Fair warning: this is a lot of information. Possibly too much
+        information. But yeah—you’ve been warned.
+      </p>
+      <div class="slide-control">
+        <span aria-hidden="true">Slide to continue</span>
+        <span class="slide-arrow" aria-hidden="true">→</span>
+        <input
+          id="longer-version-slider"
+          type="range"
+          min="0"
+          max="100"
+          value="0"
+          aria-label="Slide all the way right to open the longer version"
+        />
+      </div>
+    </div>
   </main>
 </Layout>
+
+<script>
+  const trigger = document.querySelector<HTMLButtonElement>(".longer-version");
+  const gate = document.querySelector<HTMLElement>(".longer-version-gate");
+  const slider = document.querySelector<HTMLInputElement>("#longer-version-slider");
+  const icon = trigger?.querySelector<HTMLElement>(".gate-icon");
+
+  trigger?.addEventListener("click", () => {
+    if (!gate || !slider) return;
+    const willOpen = trigger.getAttribute("aria-expanded") !== "true";
+
+    trigger.setAttribute("aria-expanded", String(willOpen));
+    gate.setAttribute("aria-hidden", String(!willOpen));
+    gate.classList.toggle("is-open", willOpen);
+    if (icon) icon.textContent = willOpen ? "−" : "＋";
+
+    if (willOpen) {
+      window.setTimeout(() => {
+        if (trigger.getAttribute("aria-expanded") === "true") slider.focus();
+      }, 260);
+    } else {
+      slider.value = "0";
+      gate.style.setProperty("--progress", "0%");
+    }
+  });
+
+  slider?.addEventListener("input", () => {
+    if (!gate) return;
+    const progress = Number(slider.value);
+    gate.style.setProperty("--progress", `${progress}%`);
+
+    if (progress >= 98) {
+      window.location.href = "/the-longer-version";
+    }
+  });
+
+  slider?.addEventListener("change", () => {
+    if (!gate || Number(slider.value) >= 98) return;
+    slider.value = "0";
+    gate.style.setProperty("--progress", "0%");
+  });
+</script>
 
 <style>
   .profile {
     width: min(100%, 470px);
     margin: 0 auto;
-    padding: 96px 24px 80px;
+    padding: 96px 24px 92px;
   }
 
   .intro {
-    margin-bottom: 78px;
+    margin-bottom: 76px;
   }
 
   .portrait {
@@ -125,156 +194,242 @@ import { siteContent, identity } from "../config";
   }
 
   h1 {
-    margin: 0 0 22px;
+    margin: 0 0 24px;
     font-family: "Instrument Serif", Georgia, serif;
-    font-size: clamp(43px, 10vw, 58px);
+    font-size: clamp(46px, 10.5vw, 62px);
     font-weight: 400;
     line-height: 0.96;
-    letter-spacing: -0.035em;
-  }
-
-  h1 em {
-    font-weight: 400;
+    letter-spacing: -0.04em;
   }
 
   .intro-copy,
-  section > p,
-  .focus-row p {
+  .difference-list p {
     font-size: 14px;
-    line-height: 1.58;
+    line-height: 1.62;
     color: var(--muted);
   }
 
   .intro-copy {
-    max-width: 390px;
     margin: 0;
   }
 
   section {
-    margin-top: 70px;
-  }
-
-  .project {
-    margin-top: 0;
-  }
-
-  .brand-line {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    margin: 0 0 14px;
-    font-size: 13px;
-    font-weight: 650;
-    letter-spacing: -0.01em;
-  }
-
-  .project-strip,
-  .work-collage {
-    display: block;
-    width: 100%;
-    object-fit: cover;
-    background: #171918;
-    border: 1px solid var(--line);
-  }
-
-  .project-strip {
-    aspect-ratio: 2.25 / 1;
-    border-radius: 7px;
-  }
-
-  .project p {
-    margin: 14px 0 0;
+    margin-top: 68px;
   }
 
   .section-title {
-    margin-bottom: 20px;
-    padding-bottom: 10px;
+    margin-bottom: 0;
+    padding-bottom: 11px;
     border-bottom: 1px solid var(--line);
+    line-height: 1.45;
   }
 
-  .section-intro {
-    margin: -4px 0 18px;
-  }
-
-  .rows {
-    border-top: 1px solid var(--line);
-  }
-
-  .section-title + .rows {
-    border-top: 0;
-  }
-
-  .row {
-    display: grid;
-    grid-template-columns: 92px 1fr;
-    gap: 16px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 13px;
-  }
-
-  .row span:first-child {
-    font-weight: 650;
-  }
-
-  .row span:last-child {
-    color: var(--quiet);
-    text-align: right;
-  }
-
-  .focus-row {
-    padding: 15px 0 16px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .row-heading {
+  .experience-row {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 20px;
+    gap: 24px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
     font-size: 13px;
+  }
+
+  .experience-row div {
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .experience-row strong {
     font-weight: 650;
   }
 
-  .row-index {
+  .experience-row div span,
+  .experience-row > span {
+    color: var(--quiet);
+  }
+
+  .experience-row > span {
+    flex: 0 0 auto;
     font-size: 11px;
     font-style: italic;
-    font-weight: 400;
-    color: var(--quiet);
   }
 
-  .focus-row p {
-    margin: 7px 36px 0 0;
+  .difference-list article {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 20px 0 22px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .number {
+    padding-top: 3px;
+    color: var(--quiet);
+    font-size: 10px;
+    font-style: italic;
+  }
+
+  .difference-list h3 {
+    margin: 0 0 8px;
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 25px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .difference-list p {
+    margin: 0;
     font-size: 13px;
   }
 
-  .work-collage {
-    aspect-ratio: 1 / 1.28;
-    object-position: center top;
-    border-radius: 7px;
+  .longer-version {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 68px;
+    padding: 14px 17px 15px;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    color: var(--ink);
+    background: transparent;
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 160ms ease, color 160ms ease, background 160ms ease;
   }
 
-  .caption {
-    margin: 8px 0 0;
-    font-size: 10px;
-    font-style: italic;
+  .longer-version:hover {
+    transform: translateY(-2px);
+    color: var(--paper);
+    background: var(--ink);
+  }
+
+  .longer-version span:last-child {
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 13px;
+  }
+
+  .longer-version-gate {
+    --progress: 0%;
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-12px);
+    transition:
+      max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      margin-top 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 220ms ease,
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .longer-version-gate.is-open {
+    max-height: 170px;
+    margin-top: 18px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .longer-version-gate > p {
+    margin: 0 0 14px;
     color: var(--quiet);
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.55;
   }
 
-  .about-copy {
-    margin: 20px 0 0;
+  .slide-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 54px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background:
+      linear-gradient(90deg, rgba(155, 205, 185, 0.2) var(--progress), transparent var(--progress)),
+      rgba(255, 255, 255, 0.025);
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    transition: background 100ms linear;
+  }
+
+  .slide-arrow {
+    position: absolute;
+    right: 19px;
+    color: var(--quiet);
+    font-size: 15px;
+  }
+
+  .slide-control input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0.01;
+    cursor: grab;
+  }
+
+  .slide-control input:active {
+    cursor: grabbing;
+  }
+
+  .slide-control::before {
+    content: "›";
+    position: absolute;
+    z-index: 1;
+    left: max(5px, calc(var(--progress) - 43px));
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--paper);
+    background: var(--ink);
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 25px;
+    pointer-events: none;
+    transition: left 100ms linear;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .longer-version-gate {
+      transition: none;
+    }
   }
 
   @media (max-width: 540px) {
     .profile {
-      padding: 68px 22px 56px;
+      padding: 68px 22px 64px;
     }
 
     .intro {
-      margin-bottom: 62px;
+      margin-bottom: 60px;
     }
 
-    section {
-      margin-top: 58px;
+    section,
+    .longer-version {
+      margin-top: 56px;
+    }
+
+    .experience-row div {
+      display: block;
+    }
+
+    .experience-row div span {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
     }
   }
 </style>
