@@ -3,7 +3,7 @@ import EditorialPage from "../layouts/EditorialPage.astro";
 
 const seo = {
   title: "The Longer Version — Haris Samingan",
-  description: "The work, goals, values, and hard conversations shaping Haris Samingan.",
+  description: "The values, daily life, and hard decisions shaping Haris Samingan.",
   image: "/haris.jpg",
 };
 ---
@@ -12,72 +12,174 @@ const seo = {
   seo={seo}
   eyebrow="Beyond the short bio"
   title="The longer version"
-  intro="The work I’m doing, the future I’m building toward, the values behind it, and some of the harder conversations that have shaped me."
+  intro="Life is too short not to share, in my opinion. What’s the worst that can happen?"
 >
+  <section class="transparency-section">
+    <h2>Value #1 — Transparency</h2>
+    <div class="truths">
+      <p>
+        <strong class="truth-label">Sexuality:</strong>
+        <span
+          class="identity-reveal"
+          tabindex="0"
+          aria-label="I don’t fancy girls. I’m gay."
+        >
+          <span>I don’t fancy girls.</span>
+          <span aria-hidden="true">I’m gay.</span>
+        </span>
+      </p>
+      <p>
+        I’m Malay, but I’m not Muslim. I have renounced my religion.
+      </p>
+    </div>
+  </section>
+
   <section>
-    <h2>What I do</h2>
-    <p>
-      I’m building EzWin Academy, a math tuition business in Singapore. Before
-      this, I worked in software and spent years building coding schools and
-      education businesses. The common thread has always been the same: take
-      something difficult and make it easier for someone else to understand.
+    <h2>Hard conversations and decisions</h2>
+    <ul>
+      <li data-index="01">
+        <strong>With my mum.</strong>
+        I told her that I forgive her for not treating my late grandma well.
+      </li>
+      <li data-index="02">
+        <strong>With my little brother.</strong>
+        I told him directly about habits I don’t like, including gaslighting.
+      </li>
+      <li data-index="03">
+        <strong>With my big brother.</strong>
+        I blocked his phone number after he asked me for money. I still hang out
+        with him; I just don’t want to be his piggy bank.
+      </li>
+    </ul>
+    <p class="happier-now">
+      There have been many more hard conversations and difficult decisions. I’m
+      much happier now.
     </p>
   </section>
 
   <section>
-    <h2>What I’m building toward</h2>
-    <ul>
-      <li data-index="01">
-        <strong>A tuition business known for generosity.</strong>
-        More useful resources, clearer explanations, and more care than students
-        and parents expect to receive.
+    <h2>My day to day</h2>
+    <ol class="daily-routine">
+      <li data-index="5:00 AM"><strong>Wake up.</strong></li>
+      <li data-index="5:30 AM"><strong>Run or exercise.</strong></li>
+      <li data-index="7:00 AM"><strong>Nap.</strong></li>
+      <li data-index="9:00 AM"><strong>Work.</strong></li>
+      <li data-index="12:00 PM"><strong>Lunch.</strong></li>
+      <li data-index="1:00 PM"><strong>Nap again.</strong></li>
+      <li data-index="2:00 PM"><strong>Work again.</strong></li>
+      <li data-index="6:00 PM"><strong>Exercise.</strong></li>
+      <li data-index="10:00 PM">
+        <strong>Sleep.</strong>
+        I usually sleep in just my underwear.
       </li>
-      <li data-index="02">
-        <strong>A different kind of physical centre.</strong>
-        Laptops instead of stacks of paper, with technology helping teachers see
-        exactly where each student is stuck.
-      </li>
-      <li data-index="03">
-        <strong>A life with meaningful ambition.</strong>
-        Build something substantial without letting the business become the only
-        interesting part of who I am.
-      </li>
-    </ul>
+    </ol>
   </section>
 
   <section>
-    <h2>What I value</h2>
-    <ul>
-      <li data-index="01">
-        <strong>Over-delivering.</strong>
-        Do more than the transaction requires, especially when the extra effort
-        helps someone finally understand.
-      </li>
-      <li data-index="02">
-        <strong>Directness with care.</strong>
-        Say the true thing early, clearly, and without treating honesty as an
-        excuse to be unkind.
-      </li>
-      <li data-index="03">
-        <strong>Building before talking.</strong>
-        Ideas become more honest once they meet students, customers, deadlines,
-        and the real world.
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Hard conversations</h2>
+    <h2>Moving out</h2>
     <p>
-      Some of the most important changes in my life started with conversations I
-      would rather have avoided: admitting when an idea was not working, telling
-      someone what I actually needed, or hearing that my intentions and my impact
-      were not the same thing.
-    </p>
-    <p>
-      I’m learning that a difficult conversation is rarely a detour from the
-      relationship or the work. Handled properly, it is part of how both become
-      real.
+      I moved out of my parents’ house mainly because I need 100% focus to
+      achieve what I want to do. Having my own space gives me the independence,
+      quiet, and control over my routine that I need.
     </p>
   </section>
 </EditorialPage>
+
+<style>
+  .transparency-section > h2 {
+    margin-bottom: 22px !important;
+    padding: 0 !important;
+    border-bottom: 0 !important;
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: clamp(42px, 10vw, 58px) !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.035em !important;
+    line-height: 0.98 !important;
+    text-transform: none !important;
+    color: var(--ink) !important;
+  }
+
+  .truths {
+    border-top: 1px solid var(--line);
+  }
+
+  .truths p {
+    margin: 0 !important;
+    padding: 17px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .identity-reveal {
+    position: relative;
+    display: inline-grid;
+    color: var(--muted);
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.62;
+    cursor: help;
+    outline: none;
+  }
+
+  .truth-label {
+    display: inline;
+    margin-right: 5px;
+    color: var(--quiet);
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    vertical-align: 4px;
+  }
+
+  .identity-reveal span {
+    grid-area: 1 / 1;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .identity-reveal span:last-child {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  .identity-reveal:hover span:first-child,
+  .identity-reveal:focus-visible span:first-child {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  .identity-reveal:hover span:last-child,
+  .identity-reveal:focus-visible span:last-child {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .identity-reveal:focus-visible {
+    box-shadow: 0 2px 0 var(--accent);
+  }
+
+  .happier-now {
+    margin-top: 22px !important;
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 25px !important;
+    line-height: 1.25 !important;
+    color: var(--ink) !important;
+  }
+
+  .daily-routine li {
+    min-height: 52px;
+    padding-left: 98px;
+  }
+
+  .daily-routine li::before {
+    width: 72px;
+    font-style: normal;
+    letter-spacing: 0.02em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .identity-reveal span {
+      transition: none;
+    }
+  }
+</style>
