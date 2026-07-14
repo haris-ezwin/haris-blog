@@ -58,16 +58,17 @@ const { seo, navVariant = "home" } = Astro.props;
   }
 
   :root {
-    --paper: #fbfbf8;
-    --ink: #171714;
-    --muted: #4d4d48;
-    --quiet: #8a8a83;
-    --line: #dfdfd8;
+    color-scheme: dark;
+    --paper: #0c0d0d;
+    --ink: #f1f0e9;
+    --muted: #b3b2aa;
+    --quiet: #777872;
+    --line: #292b29;
     --fg: var(--ink);
     --faint: var(--quiet);
-    --accent: #2f6554;
-    --hover: #f2f2ed;
-    --card: #f3f3ee;
+    --accent: #9bcdb9;
+    --hover: #171918;
+    --card: #151716;
   }
 
   * {
@@ -83,9 +84,9 @@ const { seo, navVariant = "home" } = Astro.props;
     margin: 0;
     color: var(--ink);
     background:
-      radial-gradient(circle at 36% 0%, rgba(255, 214, 231, 0.52), transparent 21rem),
-      radial-gradient(circle at 67% 2%, rgba(201, 231, 255, 0.52), transparent 22rem),
-      radial-gradient(circle at 82% 4%, rgba(220, 247, 207, 0.42), transparent 18rem),
+      radial-gradient(circle at 35% -2%, rgba(111, 47, 76, 0.34), transparent 23rem),
+      radial-gradient(circle at 67% 0%, rgba(42, 80, 111, 0.32), transparent 24rem),
+      radial-gradient(circle at 84% 2%, rgba(52, 90, 67, 0.24), transparent 20rem),
       var(--paper);
     font-family: "Inter", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
