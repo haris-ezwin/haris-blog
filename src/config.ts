@@ -63,11 +63,6 @@ export const siteContent = {
   writing: {
     heading: "Notes on building an education business",
   },
-
-  contact: {
-    heading: "Let's talk about education, tech, or anything in between.",
-    cta: "Find me on LinkedIn",
-  },
 };
 
 export const blogPageContent = {

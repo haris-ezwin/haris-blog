@@ -124,21 +124,6 @@ const dot = (d: Date) =>
     }
   </section>
 
-  {/* ===== CONTACT ===== */}
-  <section id="contact" class="contact split">
-    <div class="split-rail">
-      <div class="section-label">04 — Contact</div>
-    </div>
-    <div class="split-body">
-      <div class="contact-heading">{siteContent.contact.heading}</div>
-      <a
-        class="btn btn-accent"
-        href={identity.linkedin}
-        target="_blank"
-        rel="noopener">{siteContent.contact.cta.toUpperCase()} <span>↗</span></a
-      >
-    </div>
-  </section>
 </Layout>
 
 <style>
@@ -242,13 +227,7 @@ const dot = (d: Date) =>
     border: 1.5px solid var(--fg);
     padding: 11.5px 22px;
   }
-  .btn-accent {
-    color: #fff;
-    background: var(--accent);
-    padding: 14px 24px;
-  }
-
-  /* ===== Split sections (about / contact) ===== */
+  /* ===== Split section (about) ===== */
   .split {
     border-top: 1px solid var(--line);
     display: grid;
@@ -378,16 +357,6 @@ const dot = (d: Date) =>
     max-width: 600px;
   }
 
-  /* ===== Contact ===== */
-  .contact-heading {
-    font-size: 34px;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    margin-bottom: 24px;
-    max-width: 520px;
-    line-height: 1.1;
-  }
-
   /* ===== Responsive ===== */
   @media (max-width: 860px) {
     .hero-title {
@@ -497,9 +466,6 @@ const dot = (d: Date) =>
     }
     .post-title {
       font-size: 17px;
-    }
-    .contact-heading {
-      font-size: 28px;
     }
   }
 </style>
