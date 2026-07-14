@@ -60,9 +60,6 @@ export const siteContent = {
     },
   ],
 
-  writing: {
-    heading: "Notes on building an education business",
-  },
 };
 
 export const blogPageContent = {

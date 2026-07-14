@@ -24,58 +24,50 @@ const { seo, navVariant = "home" } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
-    <div class="frame">
-      {/* ===== NAV ===== */}
-      <nav class="nav">
-        {
-          navVariant === "post" ? (
-            <Fragment>
-              <a class="brand" href="/">{identity.handle}</a>
-              <div class="nav-right">
-                <a class="nav-link" href="/#writing">← all writing</a>
-              </div>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <a class="brand" href="#top">{identity.handle}</a>
-              <div class="nav-right">
-                <a class="nav-link" href="#about">about</a>
-                <a class="nav-link" href="#focus">focus</a>
-                <a class="nav-link" href="#writing">writing</a>
-              </div>
-            </Fragment>
-          )
-        }
-      </nav>
+    <div class="page-shell">
+      {
+        navVariant === "post" && (
+          <nav class="post-nav">
+            <a href="/">← {identity.handle}</a>
+          </nav>
+        )
+      }
 
       <slot />
 
-      {/* ===== FOOTER ===== */}
       <footer class="site-footer">
         <span>© 2026 {identity.name}</span>
-        <span>{identity.location}</span>
+        <span>Made in {identity.location}</span>
       </footer>
     </div>
   </body>
 </html>
 
 <style is:global>
+  @font-face {
+    font-family: "Inter";
+    src: url("/fonts/InterVariable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
-    --bg: #0e0e11;
-    --fg: #f4f4f5;
-    --muted: #9a9aa2;
-    --faint: #67676f;
-    --line: #232327;
-    --card: #16161a;
-    --accent: #5b8cff;
-    --btn-bg: #f4f4f5;
-    --btn-fg: #0e0e11;
-    --hover: #16161a;
+    --paper: #fbfbf8;
+    --ink: #171714;
+    --muted: #4d4d48;
+    --quiet: #8a8a83;
+    --line: #dfdfd8;
+    --fg: var(--ink);
+    --faint: var(--quiet);
+    --accent: #2f6554;
+    --hover: #f2f2ed;
+    --card: #f3f3ee;
   }
 
   * {
@@ -83,118 +75,68 @@ const { seo, navVariant = "home" } = Astro.props;
   }
 
   html {
-    scroll-behavior: smooth;
+    min-width: 320px;
+    background: var(--paper);
   }
 
   body {
     margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 36% 0%, rgba(255, 214, 231, 0.52), transparent 21rem),
+      radial-gradient(circle at 67% 2%, rgba(201, 231, 255, 0.52), transparent 22rem),
+      radial-gradient(circle at 82% 4%, rgba(220, 247, 207, 0.42), transparent 18rem),
+      var(--paper);
+    font-family: "Inter", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
-    transition: background 0.25s, color 0.25s;
   }
 
   a {
     color: inherit;
+    text-underline-offset: 3px;
   }
 
-  .mono {
-    font-family: "Space Mono", monospace;
+  img {
+    max-width: 100%;
   }
 
-  /* ===== Layout frame ===== */
-  .frame {
-    max-width: 1100px;
-    margin: 0 auto;
-    border-left: 1px solid var(--line);
-    border-right: 1px solid var(--line);
+  .page-shell {
     min-height: 100vh;
-    transition: border-color 0.25s;
   }
 
-  /* ===== Nav ===== */
-  .nav {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--bg);
-    padding: 22px 44px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--line);
-    transition: background 0.25s, border-color 0.25s;
-  }
-
-  .brand {
-    font-family: "Space Mono", monospace;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    text-decoration: none;
-    color: var(--fg);
-  }
-
-  .nav-right {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    font-family: "Space Mono", monospace;
-    font-size: 12.5px;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-  }
-
-  .nav-link {
-    text-decoration: none;
-  }
-  .nav-link:hover {
-    color: var(--fg);
-  }
-
-  /* ===== Footer ===== */
+  .post-nav,
   .site-footer {
-    border-top: 1px solid var(--line);
-    padding: 26px 44px;
+    width: min(calc(100% - 48px), 422px);
+    margin-inline: auto;
+  }
+
+  .post-nav {
+    padding-top: 36px;
+    font-size: 12px;
+  }
+
+  .post-nav a {
+    text-decoration: none;
+  }
+
+  .site-footer {
     display: flex;
     justify-content: space-between;
-    font-family: "Space Mono", monospace;
-    font-size: 11.5px;
-    color: var(--faint);
-    letter-spacing: 0.04em;
+    gap: 20px;
+    padding: 20px 0 54px;
+    border-top: 1px solid var(--line);
+    color: var(--quiet);
+    font-size: 10px;
   }
 
-  /* ===== Mono section label ===== */
-  .section-label {
-    font-family: "Space Mono", monospace;
-    font-size: 12px;
-    color: var(--faint);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  @media (max-width: 720px) {
-    .frame {
-      border-left: none;
-      border-right: none;
-    }
-    .nav {
-      padding: 14px 18px;
-    }
-    .nav-right {
-      gap: 16px;
-      font-size: 11.5px;
-    }
+  @media (max-width: 540px) {
+    .post-nav,
     .site-footer {
-      padding: 22px 18px;
-      font-size: 11px;
+      width: calc(100% - 44px);
     }
-  }
 
-  @media (max-width: 520px) {
-    .nav-right .nav-link {
-      display: none;
+    .site-footer {
+      padding-bottom: 36px;
     }
   }
 </style>
