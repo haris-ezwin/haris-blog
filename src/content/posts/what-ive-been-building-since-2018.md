@@ -2,7 +2,6 @@
 title: "What I've been building since 2018"
 pubDate: 2026-08-04
 description: "Software developer, then coding schools, now a math tuition business. The short version of how I got here, and why I keep ending up in a classroom."
-author: "Haris Samingan"
 eyebrow: "personal"
 ---
 

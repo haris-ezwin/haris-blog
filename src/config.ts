@@ -16,7 +16,6 @@ export const identity = {
   role: "Founder & Educator",
   photo: "/haris.jpg",
   linkedin: "https://sg.linkedin.com/in/haris-samingan",
-  email: "haris@ezwin.academy",
   location: "Singapore",
   flag: "🇸🇬",
 };

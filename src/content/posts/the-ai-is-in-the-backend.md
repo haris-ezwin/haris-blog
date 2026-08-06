@@ -2,7 +2,6 @@
 title: "The AI in my tuition business is invisible on purpose"
 pubDate: 2026-06-24
 description: "I don't sell AI to parents. It runs in the backend — worksheets, marking, spotting the gap — so that the part they actually pay for stays human."
-author: "Haris Samingan"
 eyebrow: "on ai"
 ---
 

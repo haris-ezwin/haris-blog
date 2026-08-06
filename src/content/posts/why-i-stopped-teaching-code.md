@@ -2,7 +2,6 @@
 title: "Why I stopped teaching code and started teaching math"
 pubDate: 2026-07-15
 description: "Coding classes were enjoyable to teach and difficult to build a business on. Academic subjects are the opposite, and the money in Singapore says so plainly."
-author: "Haris Samingan"
 eyebrow: "on business"
 ---
 
