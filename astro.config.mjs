@@ -9,6 +9,11 @@ export default defineConfig({
   integrations: [tailwind(), icon()],
   output: "server",
   adapter: vercel(),
+  // The blog index and the profile page both used to live elsewhere.
+  redirects: {
+    "/blog": "/",
+    "/the-longer-version": "/",
+  },
   markdown: {
     remarkPlugins: [remarkReadingTime],
   },

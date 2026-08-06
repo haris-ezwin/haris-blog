@@ -1,17 +1,17 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { Image } from "astro:assets";
 import { getCollection, getEntry, render } from "astro:content";
-import { identity } from "../../config";
+import { identity, siteContent } from "../../config";
+import { shortDate, tagOf } from "../../lib/ledger";
 
 const { id } = Astro.params;
 const entry = await getEntry("posts", id as string);
 
 if (!entry) {
-  return Astro.redirect("/blog");
+  return Astro.redirect("/");
 }
 
-const { Content, remarkPluginFrontmatter } = await render(entry);
+const { Content } = await render(entry);
 
 // Find the next (older) post for the "next" link.
 const all = await getCollection("posts");
@@ -22,335 +22,175 @@ all.sort(
 const idx = all.findIndex((p) => p.id === entry.id);
 const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 
-const dot = (d: Date) =>
-  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
-    d.getDate(),
-  ).padStart(2, "0")}`;
-
 const pub = new Date(entry.data.pubDate);
-const readingTime = remarkPluginFrontmatter.minutesRead as string;
 ---
 
 <Layout
-  navVariant="post"
   seo={{
     title: `${entry.data.title} — ${identity.name}`,
     description: entry.data.description,
     image: identity.photo,
   }}
 >
-  {/* ===== ARTICLE HEADER ===== */}
-  <header class="article-head">
-    <div class="rail-spacer"></div>
-    <div class="head-body">
-      {
-        entry.data.eyebrow && (
-          <div class="art-eyebrow mono">// {entry.data.eyebrow}</div>
-        )
-      }
-      <h1 class="art-title">{entry.data.title}</h1>
-      <div class="art-byline mono">
-        <Image
-          src={identity.photo}
-          alt={identity.name}
-          width={34}
-          height={34}
-          class="byline-avatar"
-        />
-        <span class="byline-name">{entry.data.author}</span>
-        <span>·</span><span>{dot(pub)}</span>
-        <span>·</span><span>{readingTime}</span>
-      </div>
+  <main class="ledger-card">
+    <div class="post-bar">
+      <a class="post-back" href="/">← {siteContent.masthead}</a>
+      <span>{shortDate(pub)} / {tagOf(entry.data.eyebrow)}</span>
     </div>
-  </header>
 
-  {/* ===== ARTICLE BODY ===== */}
-  <div class="article-grid">
-    <aside class="art-rail">
-      <div class="rail-sticky mono">
-        <div class="rail-title">Contents</div>
-        {
-          (entry.data.contents ?? []).map((c, i) => (
-            <div>{String(i + 1).padStart(2, "0")} — {c}</div>
-          ))
-        }
-      </div>
-    </aside>
-
-    <article class="prose">
-      <Content />
-
-      {/* author footer */}
-      <div class="author-footer">
-        <Image
-          src={identity.photo}
-          alt={identity.name}
-          width={52}
-          height={52}
-          class="author-avatar"
-        />
-        <div>
-          <div class="author-name">{identity.name}</div>
-          <div class="author-role">Founder, EzWin Academy · Singapore</div>
-        </div>
-        <a
-          class="author-link mono"
-          href={identity.linkedin}
-          target="_blank"
-          rel="noopener">LINKEDIN ↗</a
-        >
-      </div>
+    <article class="post-body">
+      <h1>{entry.data.title}</h1>
+      <div class="prose"><Content /></div>
     </article>
-  </div>
 
-  {/* ===== NEXT POST ===== */}
-  {
-    next && (
-      <a class="next-post" href={`/blog/${next.id}`}>
-        <div class="next-label mono">Next →</div>
-        <div class="next-body">
-          <div class="next-meta mono">
-            {dot(new Date(next.data.pubDate))} · {next.data.readingTime ?? ""}
-          </div>
-          <div class="next-title">{next.data.title}</div>
+    {
+      next && (
+        <div class="post-next">
+          <div class="next-label">NEXT</div>
+          <a class="next-title" href={`/blog/${next.id}`}>
+            {next.data.title}
+          </a>
         </div>
-      </a>
-    )
-  }
+      )
+    }
+  </main>
 </Layout>
 
 <style>
-  .article-head {
-    display: grid;
-    grid-template-columns: 0.22fr 0.78fr;
-  }
-  .rail-spacer {
-    border-right: 1px solid var(--line);
-  }
-  .head-body {
-    padding: 72px 44px 44px;
-    border-bottom: 1px solid var(--line);
-  }
-  .art-eyebrow {
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 26px;
-  }
-  .art-title {
-    font-weight: 700;
-    font-size: 46px;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin: 0 0 28px;
-    max-width: 760px;
-    text-wrap: balance;
-  }
-  .art-byline {
+  .post-bar {
     display: flex;
-    align-items: center;
-    gap: 14px;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 28px 72px;
+    border-bottom: 1px solid var(--led-rule);
+    font-family: var(--led-mono);
     font-size: 12px;
-    color: var(--faint);
-  }
-  .byline-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: 50% 30%;
-    background: #f4f4f4;
-    border: 1px solid var(--line);
-  }
-  .byline-name {
-    color: var(--fg);
+    color: var(--led-faint);
   }
 
-  .article-grid {
-    display: grid;
-    grid-template-columns: 0.22fr 0.78fr;
-  }
-  .art-rail {
-    border-right: 1px solid var(--line);
-    position: relative;
-  }
-  .rail-sticky {
-    position: sticky;
-    top: 120px;
-    padding: 44px 28px;
-    font-size: 11px;
-    color: var(--faint);
-    letter-spacing: 0.08em;
-    line-height: 2;
-  }
-  .rail-title {
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 14px;
+  .post-back {
+    color: var(--led-muted);
+    text-decoration: none;
   }
 
-  .prose {
-    padding: 48px 44px 72px;
-    max-width: 720px;
+  .post-back:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  /* Markdown styling to match the design */
-  .prose :global(p) {
-    font-size: 16.5px;
-    line-height: 1.8;
-    color: var(--muted);
-    margin: 0 0 22px;
+  .post-body {
+    padding: 64px 72px 72px;
+    max-width: 66ch;
   }
-  .prose :global(p:first-child) {
-    font-size: 19px;
-    line-height: 1.65;
-    color: var(--fg);
+
+  h1 {
+    margin: 0 0 26px;
+    font-family: var(--led-mono);
     font-weight: 500;
-    margin-bottom: 28px;
+    font-size: 30px;
+    line-height: 1.32;
+    letter-spacing: -0.015em;
+    color: var(--led-head);
+    text-wrap: pretty;
   }
+
+  /* ===== Rendered markdown ===== */
+  .prose :global(p) {
+    margin: 0 0 26px;
+    font-family: var(--led-sans);
+    font-size: 17px;
+    line-height: 1.72;
+    color: var(--led-body);
+  }
+
   .prose :global(h2) {
-    font-family: "Space Mono", monospace;
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: 0.1em;
+    margin: 40px 0 20px;
+    font-family: var(--led-mono);
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    font-weight: 700;
-    margin: 44px 0 18px;
+    color: var(--led-faint);
   }
+
+  .prose :global(blockquote) {
+    margin: 32px 0;
+    padding-left: 22px;
+    border-left: 2px solid var(--led-quote-rule);
+    font-style: italic;
+    color: var(--led-quote);
+  }
+
+  .prose :global(blockquote p) {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.66;
+    color: inherit;
+  }
+
+  .prose :global(a) {
+    color: var(--led-bright);
+    text-underline-offset: 3px;
+  }
+
   .prose :global(em) {
     font-style: italic;
   }
-  .prose :global(a) {
-    color: var(--accent);
-    text-underline-offset: 4px;
-  }
-  .prose :global(blockquote) {
-    margin: 0 0 22px;
-    padding: 18px 24px;
-    border-left: 2px solid var(--accent);
-    background: var(--card);
-    font-size: 18px;
-    line-height: 1.6;
-    color: var(--fg);
-    font-style: italic;
-    border-radius: 0 4px 4px 0;
-  }
-  .prose :global(blockquote p) {
-    font-size: inherit;
-    color: inherit;
-    margin: 0;
+
+  .prose :global(> :last-child) {
+    margin-bottom: 0;
   }
 
-  .author-footer {
-    margin-top: 48px;
-    padding-top: 28px;
-    border-top: 1px solid var(--line);
+  .post-next {
     display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .author-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: 50% 30%;
-    background: #f4f4f4;
-    border: 1px solid var(--line);
-  }
-  .author-name {
-    font-size: 15px;
-    font-weight: 700;
-  }
-  .author-role {
-    font-size: 13.5px;
-    color: var(--muted);
-  }
-  .author-link {
-    margin-left: auto;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--btn-fg);
-    background: var(--btn-bg);
-    text-decoration: none;
-    padding: 11px 18px;
-    border-radius: 2px;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 72px 56px;
+    border-top: 1px solid var(--led-rule);
   }
 
-  .next-post {
-    text-decoration: none;
-    color: inherit;
-    display: grid;
-    grid-template-columns: 0.22fr 0.78fr;
-    border-top: 1px solid var(--line);
-    transition: background 0.15s;
-  }
-  .next-post:hover {
-    background: var(--hover);
-  }
   .next-label {
-    padding: 34px 28px 34px 44px;
-    border-right: 1px solid var(--line);
+    font-family: var(--led-mono);
     font-size: 11px;
-    color: var(--faint);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--led-faint);
   }
-  .next-body {
-    padding: 34px 44px;
-  }
-  .next-meta {
-    font-size: 12px;
-    color: var(--faint);
-    margin-bottom: 8px;
-  }
+
   .next-title {
-    font-size: 21px;
-    font-weight: 700;
-    letter-spacing: -0.015em;
+    font-family: var(--led-mono);
+    font-size: 16px;
+    color: var(--led-bright);
+    text-decoration: none;
+    text-wrap: pretty;
+  }
+
+  .next-title:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   @media (max-width: 720px) {
-    .article-head,
-    .article-grid {
-      grid-template-columns: 1fr;
+    .post-bar {
+      padding: 20px 24px;
+      font-size: 11px;
     }
-    .rail-spacer {
-      display: none;
+
+    .post-body {
+      padding: 36px 24px 44px;
     }
-    .head-body {
-      padding: 48px 18px 32px;
+
+    h1 {
+      font-size: 23px;
+      line-height: 1.28;
     }
-    .art-title {
-      font-size: 34px;
+
+    .prose :global(p),
+    .prose :global(blockquote p) {
+      font-size: 16px;
     }
-    .art-rail {
-      border-right: none;
-      border-bottom: 1px solid var(--line);
-    }
-    .rail-sticky {
-      position: static;
-      padding: 28px 18px;
-    }
-    .prose {
-      padding: 32px 18px 56px;
-    }
-    .author-footer {
-      flex-wrap: wrap;
-    }
-    .author-link {
-      margin-left: 0;
-    }
-    .next-post {
-      grid-template-columns: 1fr;
-    }
-    .next-label {
-      padding: 24px 18px 0;
-      border-right: none;
-    }
-    .next-body {
-      padding: 8px 18px 24px;
+
+    .post-next {
+      padding: 22px 24px 40px;
     }
   }
 </style>

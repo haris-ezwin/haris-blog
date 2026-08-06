@@ -4,10 +4,9 @@ import type { SEOInfo } from "../config";
 
 interface Props {
   seo: SEOInfo;
-  navVariant?: "home" | "post";
 }
 
-const { seo, navVariant = "home" } = Astro.props;
+const { seo } = Astro.props;
 ---
 
 <html lang="en">
@@ -24,51 +23,40 @@ const { seo, navVariant = "home" } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
     <div class="page-shell">
-      {
-        navVariant === "post" && (
-          <nav class="post-nav">
-            <a href="/">← {identity.handle}</a>
-          </nav>
-        )
-      }
-
       <slot />
 
       <footer class="site-footer">
         <span>© 2026 {identity.name}</span>
-        <span>Made in {identity.location}</span>
+        <span>Made in {identity.location} {identity.flag}</span>
       </footer>
     </div>
   </body>
 </html>
 
 <style is:global>
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/InterVariable.woff2") format("woff2");
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-  }
-
   :root {
     color-scheme: dark;
-    --paper: #0c0d0d;
-    --ink: #f1f0e9;
-    --muted: #b3b2aa;
-    --quiet: #777872;
-    --line: #292b29;
-    --fg: var(--ink);
-    --faint: var(--quiet);
-    --accent: #9bcdb9;
-    --hover: #171918;
-    --card: #151716;
+
+    /* Ledger — the site's mono/hairline palette. */
+    --led-page: #100f0a;
+    --led-card: #16150f;
+    --led-edge: #2e2c25;
+    --led-rule: #2a2822;
+    --led-head: #f4f1e7;
+    --led-bright: #efece2;
+    --led-body: #cfcbbe;
+    --led-quote: #9b9788;
+    --led-muted: #8a8778;
+    --led-faint: #6a6759;
+    --led-quote-rule: #3a3830;
+    --led-mono: "IBM Plex Mono", ui-monospace, monospace;
+    --led-sans: "IBM Plex Sans", Helvetica, Arial, sans-serif;
   }
 
   * {
@@ -77,18 +65,14 @@ const { seo, navVariant = "home" } = Astro.props;
 
   html {
     min-width: 320px;
-    background: var(--paper);
+    background: var(--led-page);
   }
 
   body {
     margin: 0;
-    color: var(--ink);
-    background:
-      radial-gradient(circle at 35% -2%, rgba(111, 47, 76, 0.34), transparent 23rem),
-      radial-gradient(circle at 67% 0%, rgba(42, 80, 111, 0.32), transparent 24rem),
-      radial-gradient(circle at 84% 2%, rgba(52, 90, 67, 0.24), transparent 20rem),
-      var(--paper);
-    font-family: "Inter", Arial, sans-serif;
+    background: var(--led-page);
+    color: var(--led-body);
+    font-family: var(--led-sans);
     -webkit-font-smoothing: antialiased;
   }
 
@@ -105,38 +89,30 @@ const { seo, navVariant = "home" } = Astro.props;
     min-height: 100vh;
   }
 
-  .post-nav,
-  .site-footer {
-    width: min(calc(100% - 48px), 422px);
-    margin-inline: auto;
-  }
-
-  .post-nav {
-    padding-top: 36px;
-    font-size: 12px;
-  }
-
-  .post-nav a {
-    text-decoration: none;
+  .ledger-card {
+    width: min(calc(100% - 32px), 880px);
+    margin: 40px auto 0;
+    background: var(--led-card);
+    border: 1px solid var(--led-edge);
   }
 
   .site-footer {
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    padding: 20px 0 54px;
-    border-top: 1px solid var(--line);
-    color: var(--quiet);
-    font-size: 10px;
+    width: min(calc(100% - 32px), 880px);
+    margin: 40px auto 0;
+    padding: 18px 0 56px;
+    border-top: 1px solid var(--led-rule);
+    color: var(--led-faint);
+    font-family: var(--led-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
   }
 
   @media (max-width: 540px) {
-    .post-nav,
     .site-footer {
-      width: calc(100% - 44px);
-    }
-
-    .site-footer {
+      width: calc(100% - 32px);
       padding-bottom: 36px;
     }
   }

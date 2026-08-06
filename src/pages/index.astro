@@ -1,435 +1,172 @@
 ---
-import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
-import { siteContent, identity } from "../config";
+import { getCollection, type CollectionEntry } from "astro:content";
+import { siteContent } from "../config";
+import { monthDay, tagOf } from "../lib/ledger";
 
-const experience = [
-  { company: "EzWin Academy", role: "Founder", period: "2024 — Now" },
-  { company: "EduGrow", role: "Founder", period: "2024" },
-  { company: "Sigma School", role: "Head of Operations", period: "2023 — 2024" },
-  { company: "Next Level Academy", role: "Founder", period: "2022 — 2023" },
-  { company: "Zenith Coding Academy", role: "Co-founder", period: "2021 — 2022" },
-  { company: "Learn App Code", role: "Founder", period: "2019 — 2021" },
-  { company: "Blood", role: "Software Developer", period: "2018 — 2019" },
-];
+const posts = await getCollection("posts");
+posts.sort(
+  (a, b) =>
+    new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+);
+
+// Newest first, then bucketed under a year heading.
+const years: { year: number; entries: CollectionEntry<"posts">[] }[] = [];
+for (const post of posts) {
+  const year = new Date(post.data.pubDate).getFullYear();
+  const current = years.at(-1);
+  if (current?.year === year) current.entries.push(post);
+  else years.push({ year, entries: [post] });
+}
 ---
 
 <Layout seo={siteContent.seo}>
-  <main class="profile">
-    <header class="intro">
-      <Image
-        src={identity.photo}
-        alt={identity.name}
-        width={78}
-        height={96}
-        class="portrait"
-      />
-
-      <p class="kicker">{identity.name} · {identity.location}</p>
-      <h1>Building a math tuition business in Singapore</h1>
-      <p class="intro-copy">
-        I’m an educator, entrepreneur, and former software developer. After years
-        of building coding schools and education businesses, I now run EzWin
-        Academy—combining strong math teaching with the tools and systems I wish
-        every student had.
-      </p>
+  <main class="ledger-card">
+    <header class="masthead">
+      <div class="masthead-name">{siteContent.masthead}</div>
+      <p class="masthead-tagline">{siteContent.tagline}</p>
     </header>
 
-    <section aria-labelledby="experience-title">
-      <h2 id="experience-title" class="section-title">Companies I’ve worked at or founded</h2>
-      <div class="experience-list">
-        {
-          experience.map((item) => (
-            <div class="experience-row">
-              <div>
-                <strong>{item.company}</strong>
-                <span>{item.role}</span>
-              </div>
-              <span>{item.period}</span>
+    <div class="ledger-body">
+      {
+        years.map(({ year, entries }) => (
+          <Fragment>
+            <div class="year-label">{year}</div>
+            <div class="year-rows">
+              {entries.map((post) => (
+                <a class="row" href={`/blog/${post.id}`}>
+                  <span class="row-date" data-tag={tagOf(post.data.eyebrow)}>
+                    {monthDay(new Date(post.data.pubDate))}
+                  </span>
+                  <span class="row-title">{post.data.title}</span>
+                  <span class="row-tag">{tagOf(post.data.eyebrow)}</span>
+                </a>
+              ))}
             </div>
-          ))
-        }
-      </div>
-    </section>
-
-    <section aria-labelledby="difference-title">
-      <h2 id="difference-title" class="section-title">How is my math tuition different?</h2>
-      <div class="difference-list">
-        <article>
-          <span class="number">01</span>
-          <div>
-            <h3>Over, over, over deliver.</h3>
-            <p>
-              Create far more useful content than expected—from carefully made
-              resources to clear math explanation videos that make difficult
-              questions finally click.
-            </p>
-          </div>
-        </article>
-        <article>
-          <span class="number">02</span>
-          <div>
-            <h3>Use technology and AI.</h3>
-            <p>
-              The long-term goal is a physical tuition centre built around
-              laptops instead of paper: targeted practice, immediate feedback,
-              and a learning system that adapts to each student.
-            </p>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <button
-      class="longer-version"
-      type="button"
-      aria-expanded="false"
-      aria-controls="longer-version-gate"
-    >
-      <span>The longer version of me</span>
-      <span class="gate-icon" aria-hidden="true">＋</span>
-    </button>
-
-    <div
-      class="longer-version-gate"
-      id="longer-version-gate"
-      aria-hidden="true"
-    >
-      <p>
-        Fair warning: this is a lot of information. Possibly too much
-        information. But yeah—you’ve been warned.
-      </p>
-      <div class="slide-control">
-        <span aria-hidden="true">Slide to continue</span>
-        <span class="slide-arrow" aria-hidden="true">→</span>
-        <input
-          id="longer-version-slider"
-          type="range"
-          min="0"
-          max="100"
-          value="0"
-          aria-label="Slide all the way right to open the longer version"
-        />
-      </div>
+          </Fragment>
+        ))
+      }
     </div>
   </main>
 </Layout>
 
-<script>
-  const trigger = document.querySelector<HTMLButtonElement>(".longer-version");
-  const gate = document.querySelector<HTMLElement>(".longer-version-gate");
-  const slider = document.querySelector<HTMLInputElement>("#longer-version-slider");
-  const icon = trigger?.querySelector<HTMLElement>(".gate-icon");
-
-  trigger?.addEventListener("click", () => {
-    if (!gate || !slider) return;
-    const willOpen = trigger.getAttribute("aria-expanded") !== "true";
-
-    trigger.setAttribute("aria-expanded", String(willOpen));
-    gate.setAttribute("aria-hidden", String(!willOpen));
-    gate.classList.toggle("is-open", willOpen);
-    if (icon) icon.textContent = willOpen ? "−" : "＋";
-
-    if (willOpen) {
-      window.setTimeout(() => {
-        if (trigger.getAttribute("aria-expanded") === "true") slider.focus();
-      }, 260);
-    } else {
-      slider.value = "0";
-      gate.style.setProperty("--progress", "0%");
-    }
-  });
-
-  slider?.addEventListener("input", () => {
-    if (!gate) return;
-    const progress = Number(slider.value);
-    gate.style.setProperty("--progress", `${progress}%`);
-
-    if (progress >= 98) {
-      window.location.href = "/the-longer-version";
-    }
-  });
-
-  slider?.addEventListener("change", () => {
-    if (!gate || Number(slider.value) >= 98) return;
-    slider.value = "0";
-    gate.style.setProperty("--progress", "0%");
-  });
-</script>
-
 <style>
-  .profile {
-    width: min(100%, 470px);
-    margin: 0 auto;
-    padding: 96px 24px 92px;
-  }
-
-  .intro {
-    margin-bottom: 76px;
-  }
-
-  .portrait {
-    display: block;
-    width: 78px;
-    height: 96px;
-    object-fit: cover;
-    object-position: 50% 25%;
-    border-radius: 36px 36px 22px 22px;
-    margin-bottom: 28px;
-    filter: saturate(0.86) contrast(1.02);
-  }
-
-  .kicker,
-  .section-title {
-    margin: 0;
-    font-size: 11px;
-    font-weight: 650;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-  }
-
-  .kicker {
-    margin-bottom: 18px;
-    color: var(--quiet);
-  }
-
-  h1 {
-    margin: 0 0 24px;
-    font-family: "Instrument Serif", Georgia, serif;
-    font-size: clamp(46px, 10.5vw, 62px);
-    font-weight: 400;
-    line-height: 0.96;
-    letter-spacing: -0.04em;
-  }
-
-  .intro-copy,
-  .difference-list p {
-    font-size: 14px;
-    line-height: 1.62;
-    color: var(--muted);
-  }
-
-  .intro-copy {
-    margin: 0;
-  }
-
-  section {
-    margin-top: 68px;
-  }
-
-  .section-title {
-    margin-bottom: 0;
-    padding-bottom: 11px;
-    border-bottom: 1px solid var(--line);
-    line-height: 1.45;
-  }
-
-  .experience-row {
+  .masthead {
+    padding: 56px 72px 40px;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 13px;
-  }
-
-  .experience-row div {
-    display: flex;
+    flex-direction: column;
     gap: 8px;
-    min-width: 0;
+    border-bottom: 1px solid var(--led-rule);
   }
 
-  .experience-row strong {
-    font-weight: 650;
-  }
-
-  .experience-row div span,
-  .experience-row > span {
-    color: var(--quiet);
-  }
-
-  .experience-row > span {
-    flex: 0 0 auto;
-    font-size: 11px;
-    font-style: italic;
-  }
-
-  .difference-list article {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 12px;
-    padding: 20px 0 22px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .number {
-    padding-top: 3px;
-    color: var(--quiet);
-    font-size: 10px;
-    font-style: italic;
-  }
-
-  .difference-list h3 {
-    margin: 0 0 8px;
-    font-family: "Instrument Serif", Georgia, serif;
-    font-size: 25px;
-    font-weight: 400;
-    line-height: 1.1;
-  }
-
-  .difference-list p {
-    margin: 0;
-    font-size: 13px;
-  }
-
-  .longer-version {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 68px;
-    padding: 14px 17px 15px;
-    border: 1px solid var(--ink);
-    border-radius: 4px;
-    color: var(--ink);
-    background: transparent;
-    font-family: "Instrument Serif", Georgia, serif;
-    font-size: 22px;
-    font-weight: 400;
+  .masthead-name {
+    font-family: var(--led-mono);
+    font-size: 26px;
     letter-spacing: -0.01em;
-    text-decoration: none;
-    cursor: pointer;
-    transition: transform 160ms ease, color 160ms ease, background 160ms ease;
+    color: var(--led-bright);
   }
 
-  .longer-version:hover {
-    transform: translateY(-2px);
-    color: var(--paper);
-    background: var(--ink);
-  }
-
-  .longer-version span:last-child {
-    font-family: "Inter", Arial, sans-serif;
-    font-size: 13px;
-  }
-
-  .longer-version-gate {
-    --progress: 0%;
-    max-height: 0;
-    margin-top: 0;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-12px);
-    transition:
-      max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      margin-top 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 220ms ease,
-      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .longer-version-gate.is-open {
-    max-height: 170px;
-    margin-top: 18px;
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-
-  .longer-version-gate > p {
-    margin: 0 0 14px;
-    color: var(--quiet);
-    font-size: 12px;
-    font-style: italic;
-    line-height: 1.55;
-  }
-
-  .slide-control {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 54px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background:
-      linear-gradient(90deg, rgba(155, 205, 185, 0.2) var(--progress), transparent var(--progress)),
-      rgba(255, 255, 255, 0.025);
-    color: var(--muted);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    transition: background 100ms linear;
-  }
-
-  .slide-arrow {
-    position: absolute;
-    right: 19px;
-    color: var(--quiet);
-    font-size: 15px;
-  }
-
-  .slide-control input {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+  .masthead-tagline {
     margin: 0;
-    opacity: 0.01;
-    cursor: grab;
+    max-width: 68ch;
+    font-family: var(--led-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--led-muted);
   }
 
-  .slide-control input:active {
-    cursor: grabbing;
+  .ledger-body {
+    padding: 8px 72px 56px;
   }
 
-  .slide-control::before {
-    content: "›";
-    position: absolute;
-    z-index: 1;
-    left: max(5px, calc(var(--progress) - 43px));
+  .year-label {
+    padding: 34px 0 10px;
+    font-family: var(--led-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--led-faint);
+  }
+
+  .year-label:first-child {
+    padding-top: 22px;
+  }
+
+  .row {
     display: grid;
-    width: 42px;
-    height: 42px;
-    place-items: center;
-    border-radius: 50%;
-    color: var(--paper);
-    background: var(--ink);
-    font-family: "Instrument Serif", Georgia, serif;
-    font-size: 25px;
-    pointer-events: none;
-    transition: left 100ms linear;
+    grid-template-columns: 76px 1fr 92px;
+    gap: 24px;
+    align-items: baseline;
+    padding: 15px 0;
+    border-top: 1px solid var(--led-rule);
+    font-family: var(--led-mono);
+    text-decoration: none;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .longer-version-gate {
-      transition: none;
-    }
+  .ledger-body > .year-rows:last-child .row:last-child {
+    border-bottom: 1px solid var(--led-rule);
   }
 
-  @media (max-width: 540px) {
-    .profile {
-      padding: 68px 22px 64px;
+  .row-date,
+  .row-tag {
+    font-size: 12px;
+    color: var(--led-faint);
+  }
+
+  .row-tag {
+    font-size: 11px;
+    text-align: right;
+  }
+
+  .row-title {
+    font-size: 17px;
+    color: var(--led-bright);
+    text-wrap: pretty;
+  }
+
+  .row:hover .row-title {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 720px) {
+    .masthead {
+      padding: 32px 24px 22px;
     }
 
-    .intro {
-      margin-bottom: 60px;
+    .masthead-name {
+      font-size: 20px;
     }
 
-    section,
-    .longer-version {
-      margin-top: 56px;
+    .masthead-tagline {
+      font-size: 12px;
+      line-height: 1.65;
     }
 
-    .experience-row div {
-      display: block;
+    .ledger-body {
+      padding: 0 24px 40px;
     }
 
-    .experience-row div span {
-      display: block;
-      margin-top: 3px;
+    .row {
+      grid-template-columns: 1fr;
+      gap: 5px;
+      padding: 14px 0;
+    }
+
+    .row-date::after {
+      content: " · " attr(data-tag);
+    }
+
+    .row-tag {
+      display: none;
+    }
+
+    .row-date {
       font-size: 11px;
+    }
+
+    .row-title {
+      font-size: 15px;
+      line-height: 1.45;
     }
   }
 </style>
