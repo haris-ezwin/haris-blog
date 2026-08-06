@@ -5,6 +5,9 @@ export interface SEOInfo {
   title: string;
   description: string;
   image: string;
+  imageAlt?: string;
+  type?: "website" | "profile" | "article";
+  publishedTime?: string;
 }
 
 export const identity = {
@@ -20,10 +23,13 @@ export const identity = {
 
 export const siteContent = {
   seo: {
-    title: "Haris Samingan",
+    title: "Haris Samingan | Founder & Educator in Singapore",
     description:
-      "Writing about AI, education, and the small tuition business I run",
-    image: identity.photo,
+      "Haris Samingan is a Singapore founder and educator writing about AI, education, tuition, and building education businesses.",
+    image: "/og-image.png",
+    imageAlt:
+      "Haris Samingan, founder and educator, writing about AI and education",
+    type: "profile",
   } satisfies SEOInfo,
   masthead: identity.name,
   tagline: "Writing about AI, education, and the small tuition business I run",

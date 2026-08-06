@@ -29,7 +29,10 @@ const pub = new Date(entry.data.pubDate);
   seo={{
     title: `${entry.data.title} — ${identity.name}`,
     description: entry.data.description,
-    image: identity.photo,
+    image: "/og-image.png",
+    imageAlt: `${entry.data.title}, an article by ${identity.name}`,
+    type: "article",
+    publishedTime: pub.toISOString(),
   }}
 >
   <main class="ledger-card">
@@ -128,9 +131,32 @@ const pub = new Date(entry.data.pubDate);
     color: inherit;
   }
 
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 26px;
+    padding-left: 20px;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 12px;
+    font-family: var(--led-sans);
+    font-size: 17px;
+    line-height: 1.72;
+    color: var(--led-body);
+  }
+
+  .prose :global(li::marker) {
+    color: var(--led-faint);
+  }
+
   .prose :global(a) {
     color: var(--led-bright);
     text-underline-offset: 3px;
+  }
+
+  .prose :global(strong) {
+    color: var(--led-bright);
+    font-weight: 500;
   }
 
   .prose :global(em) {
@@ -185,6 +211,7 @@ const pub = new Date(entry.data.pubDate);
     }
 
     .prose :global(p),
+    .prose :global(li),
     .prose :global(blockquote p) {
       font-size: 16px;
     }

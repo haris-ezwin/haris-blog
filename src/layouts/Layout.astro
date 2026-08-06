@@ -7,6 +7,75 @@ interface Props {
 }
 
 const { seo } = Astro.props;
+const siteURL = Astro.site ?? new URL("https://haris.ezwin.academy");
+const canonicalURL = new URL(Astro.url.pathname, siteURL);
+const imageURL = new URL(seo.image, siteURL);
+const personID = new URL("/#haris-samingan", siteURL).href;
+const websiteID = new URL("/#website", siteURL).href;
+const isArticle = seo.type === "article";
+
+const person = {
+  "@type": "Person",
+  "@id": personID,
+  name: identity.name,
+  alternateName: `@${identity.handle}`,
+  url: new URL("/", siteURL).href,
+  image: new URL(identity.photo, siteURL).href,
+  jobTitle: identity.role,
+  description:
+    "Singapore founder and educator writing about AI, education, tuition, and building education businesses.",
+  homeLocation: {
+    "@type": "Place",
+    name: identity.location,
+  },
+  sameAs: [identity.linkedin],
+};
+
+const structuredData = isArticle
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "@id": `${canonicalURL.href}#article`,
+      mainEntityOfPage: canonicalURL.href,
+      headline: seo.title.replace(` — ${identity.name}`, ""),
+      description: seo.description,
+      image: imageURL.href,
+      datePublished: seo.publishedTime,
+      dateModified: seo.publishedTime,
+      author: person,
+      isPartOf: {
+        "@type": "WebSite",
+        "@id": websiteID,
+        name: identity.name,
+        url: new URL("/", siteURL).href,
+      },
+    }
+  : {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": websiteID,
+          name: identity.name,
+          alternateName: `${identity.name}'s writing`,
+          url: new URL("/", siteURL).href,
+          description: seo.description,
+          inLanguage: "en",
+          publisher: { "@id": personID },
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": `${canonicalURL.href}#profile-page`,
+          url: canonicalURL.href,
+          name: seo.title,
+          description: seo.description,
+          mainEntity: person,
+          isPartOf: { "@id": websiteID },
+        },
+      ],
+    };
+
+const jsonLD = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 ---
 
 <html lang="en">
@@ -14,12 +83,37 @@ const { seo } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#100f0a" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="author" content={identity.name} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <title>{seo.title}</title>
     <meta name="description" content={seo.description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content={seo.type ?? "website"} />
+    <meta property="og:site_name" content={identity.name} />
+    <meta property="og:locale" content="en_SG" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={seo.title} />
     <meta property="og:description" content={seo.description} />
-    <meta property="og:image" content={seo.image} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:secure_url" content={imageURL} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={seo.imageAlt ?? seo.title} />
+    {seo.publishedTime && (
+      <meta property="article:published_time" content={seo.publishedTime} />
+    )}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    <meta name="twitter:image" content={imageURL} />
+    <meta name="twitter:image:alt" content={seo.imageAlt ?? seo.title} />
+    <script type="application/ld+json" set:html={jsonLD} is:inline />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
