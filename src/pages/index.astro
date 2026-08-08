@@ -1,89 +1,174 @@
 ---
-import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
-import { homePageContent, identity } from "../config";
-import SocialLink from "../components/SocialLink.astro";
-import Link from "../components/Link.astro";
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
+import { siteContent } from "../config";
+import { monthDay, tagOf } from "../lib/ledger";
 
 const posts = await getCollection("posts");
-posts.sort((a, b) => {
-  const dateA = new Date(a.data.pubDate).getTime();
-  const dateB = new Date(b.data.pubDate).getTime();
-  return dateB - dateA;
-});
-posts.splice(2)
+posts.sort(
+  (a, b) =>
+    new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+);
+
+// Newest first, then bucketed under a year heading.
+const years: { year: number; entries: CollectionEntry<"posts">[] }[] = [];
+for (const post of posts) {
+  const year = new Date(post.data.pubDate).getFullYear();
+  const current = years.at(-1);
+  if (current?.year === year) current.entries.push(post);
+  else years.push({ year, entries: [post] });
+}
 ---
 
-<Layout seo={homePageContent.seo}>
-  <section class="mt-10 max-w-2xl mx-auto px-6">
-    <h1 class="font-bold text-3xl mb-1">{identity.name}</h1>
-    <p class="opacity-60 mb-10">{homePageContent.role}</p>
-    <div class="flex flex-col min-[520px]:flex-row gap-6 mb-8">
-      <Image
-        src={identity.logo}
-        alt={identity.name}
-        width={100}
-        height={100}
-        class="rounded-full"
-      />
-      <div class="group flex flex-col justify-center gap-2 w-fit">
-        {
-          homePageContent.socialLinks.map((link) => (
-            <SocialLink
-              title={link.title}
-              url={link.url}
-              icon={link.icon}
-              external={link.external}
-            />
-          ))
-        }
-      </div>
-    </div>
-    <p class="max-w-md mb-8">
-      {homePageContent.description}
-    </p>
-    <div class="flex items-center gap-4 group w-fit">
+<Layout seo={siteContent.seo}>
+  <main class="ledger-card">
+    <header class="masthead">
+      <h1 class="masthead-name">{siteContent.masthead}</h1>
+      <p class="masthead-tagline">{siteContent.tagline}</p>
+    </header>
+
+    <div class="ledger-body">
       {
-        homePageContent.links.map((link) => (
-          <Link text={link.title} href={link.url} external={link.external} />
-        ))
-      }
-    </div>
-  </section>
-  <section class="mt-20 max-w-2xl mx-auto px-6">
-    <h2 class="mb-8">Latest Posts</h2>
-    <div class="grid grid-cols-1 gap-10 sm:gap-6 mb-10">
-      {
-        posts.map((post) => (
-          <a
-            href={`/blog/${post.id}`}
-            class=" sm:flex sm:flex-row-reverse sm:justify-between sm:gap-6 post"
-          >
-            <Image
-              src={post.data.image.url}
-              alt={post.data.image.url}
-              width={100}
-              height={100}
-              class={"rounded-lg w-[100px] h-[100px] object-cover"}
-            />
-            <div class="mt-4 sm:my-auto">
-              <p class="opacity-60 mb-2">
-                {post.data.pubDate.toLocaleDateString()}
-              </p>
-              <h3 class="font-medium hover-underline">{post.data.title}</h3>
-              <p class="text-sm opacity-60 mt-2 mb-3">{post.data.description}</p>
+        years.map(({ year, entries }) => (
+          <Fragment>
+            <div class="year-label">{year}</div>
+            <div class="year-rows">
+              {entries.map((post) => (
+                <a class="row" href={`/blog/${post.id}`}>
+                  <span class="row-date" data-tag={tagOf(post.data.eyebrow)}>
+                    {monthDay(new Date(post.data.pubDate))}
+                  </span>
+                  <span class="row-title">{post.data.title}</span>
+                  <span class="row-tag">{tagOf(post.data.eyebrow)}</span>
+                </a>
+              ))}
             </div>
-          </a>
+          </Fragment>
         ))
       }
     </div>
-    <div class="text-center">
-      <a
-        href="/blog"
-        class="underline underline-offset-4 opacity-60 hover:opacity-100 transition-opacity"
-        >View all</a
-      >
-    </div>
-  </section>
+  </main>
 </Layout>
+
+<style>
+  .masthead {
+    padding: 56px 72px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 1px solid var(--led-rule);
+  }
+
+  .masthead-name {
+    margin: 0;
+    font-family: var(--led-mono);
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--led-bright);
+  }
+
+  .masthead-tagline {
+    margin: 0;
+    max-width: 68ch;
+    font-family: var(--led-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--led-muted);
+  }
+
+  .ledger-body {
+    padding: 8px 72px 56px;
+  }
+
+  .year-label {
+    padding: 34px 0 10px;
+    font-family: var(--led-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--led-faint);
+  }
+
+  .year-label:first-child {
+    padding-top: 22px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 76px 1fr 92px;
+    gap: 24px;
+    align-items: baseline;
+    padding: 15px 0;
+    border-top: 1px solid var(--led-rule);
+    font-family: var(--led-mono);
+    text-decoration: none;
+  }
+
+  .ledger-body > .year-rows:last-child .row:last-child {
+    border-bottom: 1px solid var(--led-rule);
+  }
+
+  .row-date,
+  .row-tag {
+    font-size: 12px;
+    color: var(--led-faint);
+  }
+
+  .row-tag {
+    font-size: 11px;
+    text-align: right;
+  }
+
+  .row-title {
+    font-size: 17px;
+    color: var(--led-bright);
+    text-wrap: pretty;
+  }
+
+  .row:hover .row-title {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 720px) {
+    .masthead {
+      padding: 32px 24px 22px;
+    }
+
+    .masthead-name {
+      font-size: 20px;
+    }
+
+    .masthead-tagline {
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .ledger-body {
+      padding: 0 24px 40px;
+    }
+
+    .row {
+      grid-template-columns: 1fr;
+      gap: 5px;
+      padding: 14px 0;
+    }
+
+    .row-date::after {
+      content: " · " attr(data-tag);
+    }
+
+    .row-tag {
+      display: none;
+    }
+
+    .row-date {
+      font-size: 11px;
+    }
+
+    .row-title {
+      font-size: 15px;
+      line-height: 1.45;
+    }
+  }
+</style>

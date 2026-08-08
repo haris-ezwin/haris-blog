@@ -1,24 +1,14 @@
 import { defineConfig } from "astro/config";
-import icon from "astro-icon";
-import { remarkReadingTime } from "./remark-reading-time.mjs";
-import node from "@astrojs/node";
-
-import tailwindcss from "@tailwindcss/vite";
+import vercel from "@astrojs/vercel";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [icon()],
+  site: process.env.SITE_URL ?? "https://haris.ezwin.academy",
   output: "server",
-
-  adapter: node({
-    mode: "standalone",
-  }),
-
-  markdown: {
-    remarkPlugins: [remarkReadingTime],
-  },
-
-  vite: {
-    plugins: [tailwindcss()],
+  adapter: vercel(),
+  // The blog index and the profile page both used to live elsewhere.
+  redirects: {
+    "/blog": "/",
+    "/the-longer-version": "/",
   },
 });
