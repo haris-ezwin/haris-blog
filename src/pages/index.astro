@@ -23,8 +23,18 @@ for (const post of posts) {
 <Layout seo={siteContent.seo}>
   <main class="ledger-card">
     <header class="masthead">
-      <h1 class="masthead-name">{siteContent.masthead}</h1>
-      <p class="masthead-tagline">{siteContent.tagline}</p>
+      <img
+        class="masthead-photo"
+        src="/haris-teaching.webp"
+        alt="Portrait of Haris Samingan"
+        width="720"
+        height="720"
+        decoding="async"
+      />
+      <div class="masthead-copy">
+        <h1 class="masthead-name">{siteContent.masthead}</h1>
+        <p class="masthead-tagline">{siteContent.tagline}</p>
+      </div>
     </header>
 
     <div class="ledger-body">
@@ -52,11 +62,18 @@ for (const post of posts) {
 
 <style>
   .masthead {
-    padding: 56px 72px 40px;
+    padding: 16px 72px 20px 24px;
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+    border-bottom: 1px solid var(--led-rule);
+  }
+
+  .masthead-copy {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    border-bottom: 1px solid var(--led-rule);
   }
 
   .masthead-name {
@@ -75,6 +92,15 @@ for (const post of posts) {
     font-size: 13px;
     line-height: 1.7;
     color: var(--led-muted);
+  }
+
+  .masthead-photo {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    object-position: center;
+    border: 1px solid var(--led-rule);
   }
 
   .ledger-body {
@@ -132,7 +158,9 @@ for (const post of posts) {
 
   @media (max-width: 720px) {
     .masthead {
-      padding: 32px 24px 22px;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px 24px 18px;
     }
 
     .masthead-name {
@@ -142,6 +170,11 @@ for (const post of posts) {
     .masthead-tagline {
       font-size: 12px;
       line-height: 1.65;
+    }
+
+    .masthead-photo {
+      width: 72px;
+      height: 72px;
     }
 
     .ledger-body {
