@@ -8,6 +8,8 @@ const postsCollection = defineCollection({
     pubDate: z.date(),
     description: z.string(),
     eyebrow: z.string().optional(),
+    socialImage: z.string().optional(),
+    socialImageAlt: z.string().optional(),
   }),
 });
 

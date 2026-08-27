@@ -29,8 +29,10 @@ const pub = new Date(entry.data.pubDate);
   seo={{
     title: `${entry.data.title} — ${identity.name}`,
     description: entry.data.description,
-    image: "/og-image.png",
-    imageAlt: `${entry.data.title}, an article by ${identity.name}`,
+    image: entry.data.socialImage ?? "/og-image.png",
+    imageAlt:
+      entry.data.socialImageAlt ??
+      `${entry.data.title}, an article by ${identity.name}`,
     type: "article",
     publishedTime: pub.toISOString(),
   }}
@@ -157,6 +159,14 @@ const pub = new Date(entry.data.pubDate);
   .prose :global(strong) {
     color: var(--led-bright);
     font-weight: 500;
+  }
+
+  .prose :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 32px 0;
+    border: 1px solid var(--led-rule);
   }
 
   .prose :global(em) {

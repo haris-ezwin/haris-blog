@@ -10,6 +10,13 @@ const { seo } = Astro.props;
 const siteURL = Astro.site ?? new URL("https://haris.ezwin.academy");
 const canonicalURL = new URL(Astro.url.pathname, siteURL);
 const imageURL = new URL(seo.image, siteURL);
+const imageExtension = imageURL.pathname.split(".").at(-1)?.toLowerCase();
+const imageType =
+  imageExtension === "jpg" || imageExtension === "jpeg"
+    ? "image/jpeg"
+    : imageExtension === "webp"
+      ? "image/webp"
+      : "image/png";
 const personID = new URL("/#haris-samingan", siteURL).href;
 const websiteID = new URL("/#website", siteURL).href;
 const isArticle = seo.type === "article";
@@ -101,7 +108,7 @@ const jsonLD = JSON.stringify(structuredData).replace(/</g, "\\u003c");
     <meta property="og:description" content={seo.description} />
     <meta property="og:image" content={imageURL} />
     <meta property="og:image:secure_url" content={imageURL} />
-    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:type" content={imageType} />
     <meta property="og:image:width" content="1232" />
     <meta property="og:image:height" content="928" />
     <meta property="og:image:alt" content={seo.imageAlt ?? seo.title} />
