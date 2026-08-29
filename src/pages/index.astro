@@ -33,7 +33,14 @@ for (const post of posts) {
       />
       <div class="masthead-copy">
         <h1 class="masthead-name">{siteContent.masthead}</h1>
-        <p class="masthead-tagline">{siteContent.tagline}</p>
+        <p class="masthead-tagline">
+          {siteContent.tagline.beforeLink}<a
+            href={siteContent.tagline.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            >{siteContent.tagline.linkText}</a
+          >{siteContent.tagline.afterLink}
+        </p>
       </div>
     </header>
 

@@ -31,5 +31,11 @@ export const siteContent = {
     type: "profile",
   } satisfies SEOInfo,
   masthead: identity.name,
-  tagline: "Writing about AI, education, and the small tuition business I run",
+  tagline: {
+    beforeLink: "I run ",
+    linkText: "EzWin Academy",
+    linkUrl: "https://www.ezwin.academy/",
+    afterLink:
+      ", a Math tuition business, and write about life, business and education.",
+  },
 };
