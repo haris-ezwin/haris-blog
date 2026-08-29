@@ -28,3 +28,17 @@ export const shortDate = (d: Date) => `${monthDay(d)}, ${d.getFullYear()}`;
 /** The right-hand category column, derived from a post's eyebrow. */
 export const tagOf = (eyebrow?: string) =>
   eyebrow?.replace(/^on\s+/i, "").trim() || "notes";
+
+/** The first Markdown image, used as a post's default social-sharing image. */
+export const firstMarkdownImage = (body?: string) => {
+  if (!body) return null;
+
+  const match = body.match(/!\[([^\]]*)\]\(\s*(?:<([^>]+)>|([^\s)]+))/);
+
+  if (!match) return null;
+
+  return {
+    alt: match[1].trim(),
+    src: match[2] ?? match[3],
+  };
+};

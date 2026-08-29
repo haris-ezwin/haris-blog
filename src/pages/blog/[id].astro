@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection, getEntry, render } from "astro:content";
 import { identity, siteContent } from "../../config";
-import { shortDate, tagOf } from "../../lib/ledger";
+import { firstMarkdownImage, shortDate, tagOf } from "../../lib/ledger";
 
 const { id } = Astro.params;
 const entry = await getEntry("posts", id as string);
@@ -12,6 +12,7 @@ if (!entry) {
 }
 
 const { Content } = await render(entry);
+const firstImage = firstMarkdownImage(entry.body);
 
 // Find the next (older) post for the "next" link.
 const all = await getCollection("posts");
@@ -29,9 +30,10 @@ const pub = new Date(entry.data.pubDate);
   seo={{
     title: `${entry.data.title} — ${identity.name}`,
     description: entry.data.description,
-    image: entry.data.socialImage ?? "/og-image.png",
+    image: entry.data.socialImage ?? firstImage?.src ?? "/og-image.png",
     imageAlt:
       entry.data.socialImageAlt ??
+      firstImage?.alt ??
       `${entry.data.title}, an article by ${identity.name}`,
     type: "article",
     publishedTime: pub.toISOString(),
