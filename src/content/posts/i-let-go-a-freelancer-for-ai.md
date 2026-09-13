@@ -7,6 +7,8 @@ eyebrow: "on business"
 
 I hired a social media assistant to help me post my videos and posts to all the social media platforms. It cost me around $90/month for the assistant. The assistant did an okay job, sometimes missed out certain posts, and the timing of the posts were inconsistent.
 
+![Painting of a robot working at a computer as a person walks away](/i-let-go-a-freelancer-for-ai.webp)
+
 It’s my fault tho. I didn’t reinforce the behaviour of posting on time. But hey, $90/month to have maybe 80% of what I need, sure. I got better things to do i.e. get more students, increase revenue.
 
 Then AI agent came along. It will cost me $138/month. But what can it do?

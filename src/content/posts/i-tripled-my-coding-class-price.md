@@ -7,6 +7,8 @@ eyebrow: "on business"
 
 *these numbers are not exact, it’s just from memory*
 
+![Painting of an orange dollar sign and rising arrow against a blue sky](/i-tripled-my-coding-class-price.webp)
+
 In 1 day, around 20 students signed up for my intro to coding classes. In the first batch, we had 60 students.
 
 Amazing right?

@@ -6,7 +6,12 @@ import { firstMarkdownImage, tagOf } from "../lib/ledger";
 
 const posts = await getCollection("posts");
 posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
-const coverDate = (date: Date) => `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getFullYear()).slice(-2)}`;
+const coverDate = (date: Date) => new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+}).format(date).replace("Sept", "Sep");
 ---
 
 <Layout seo={siteContent.seo}>
@@ -48,6 +53,7 @@ const coverDate = (date: Date) => `${String(date.getDate()).padStart(2, "0")}.${
   .cover { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid #d8d8d3; background: #e6e9e2; }
   .cover > img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
   .post-label { position: absolute; top: 12px; right: 12px; left: auto; max-width: calc(100% - 24px); display: flex; gap: 5px; align-items: center; padding: 8px 13px; border: 1px solid #7b7b7566; border-radius: 99px; background: #fafaf7f5; color: #30302e; font-size: 10px; line-height: 1.2; font-weight: 600; text-transform: uppercase; letter-spacing: .015em; }
+  .post-label time { text-transform: none; white-space: nowrap; }
   h2 { margin: 12px 0 0; color: var(--led-head); font-size: 18px; line-height: 1.3; font-weight: 600; letter-spacing: -.035em; text-wrap: pretty; }
   .post-card:hover img { transform: scale(1.035); }
   .post-card:hover h2 { text-decoration: underline; text-underline-offset: 4px; }

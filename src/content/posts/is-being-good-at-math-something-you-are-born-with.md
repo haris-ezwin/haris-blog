@@ -7,6 +7,8 @@ eyebrow: "on education"
 
 I believe so. This is based on my own personal experience.
 
+![Abstract painting of a child reading surrounded by an imaginative world](/is-being-good-at-math-something-you-are-born-with.webp)
+
 In Secondary 1 and 2, I was usually in the top three for my Math tests. And I didn’t study. I was naturally inclined towards math.
 
 At that level, the focus was more on algebra. For me, that topic just made sense. I didn’t have tuition. I learned and studied in school, and that was about it.

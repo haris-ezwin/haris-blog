@@ -7,6 +7,8 @@ eyebrow: "on business"
 
 My highest income from freelance teaching coding and related stuff was $8000 in 1 month. And I worked less than 30 hours a week.
 
+![Painting of a person moving from a world of code toward mathematics](/why-i-stopped-teaching-code.webp)
+
 So why quit such a high paying job? Well, it wasn’t enough money.
 
 First, in Singapore, tech education is not the biggest part of the private and enrichment education market.
