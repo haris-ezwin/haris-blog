@@ -92,7 +92,7 @@ const jsonLD = JSON.stringify(structuredData).replace(/</g, "\\u003c");
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-haris.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#100f0a" />
+    <meta name="theme-color" content="#fafaf8" />
     <meta name="generator" content={Astro.generator} />
     <meta name="author" content={identity.name} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -120,12 +120,6 @@ const jsonLD = JSON.stringify(structuredData).replace(/</g, "\\u003c");
     <meta name="twitter:image" content={imageURL} />
     <meta name="twitter:image:alt" content={seo.imageAlt ?? seo.title} />
     <script type="application/ld+json" set:html={jsonLD} is:inline />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
     <div class="page-shell">
@@ -141,22 +135,20 @@ const jsonLD = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 
 <style is:global>
   :root {
-    color-scheme: dark;
-
-    /* Ledger — the site's mono/hairline palette. */
-    --led-page: #100f0a;
-    --led-card: #16150f;
-    --led-edge: #2e2c25;
-    --led-rule: #2a2822;
-    --led-head: #f4f1e7;
-    --led-bright: #efece2;
-    --led-body: #cfcbbe;
-    --led-quote: #9b9788;
-    --led-muted: #8a8778;
-    --led-faint: #6a6759;
-    --led-quote-rule: #3a3830;
-    --led-mono: "IBM Plex Mono", ui-monospace, monospace;
-    --led-sans: "IBM Plex Sans", Helvetica, Arial, sans-serif;
+    color-scheme: light;
+    --led-page: #fafaf8;
+    --led-card: #ffffff;
+    --led-edge: #e1e1dc;
+    --led-rule: #deded9;
+    --led-head: #1d1d1f;
+    --led-bright: #1d1d1f;
+    --led-body: #38383b;
+    --led-quote: #65656a;
+    --led-muted: #65656a;
+    --led-faint: #6c6c70;
+    --led-quote-rule: #c9c9c4;
+    --led-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    --led-mono: var(--led-sans);
   }
 
   * {
@@ -200,7 +192,7 @@ const jsonLD = JSON.stringify(structuredData).replace(/</g, "\\u003c");
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    width: min(calc(100% - 32px), 880px);
+    width: min(calc(100% - 64px), 1440px);
     margin: 40px auto 0;
     padding: 18px 0 56px;
     border-top: 1px solid var(--led-rule);
